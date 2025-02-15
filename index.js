@@ -10,5 +10,3 @@ app.get('/', (req, res) => {
 app.listen(80, () => {
 	console.log('Server running...');
 });
-
-openmap.OpenStreetMapFetchRoads('146304012');
