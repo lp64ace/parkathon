@@ -1,18 +1,14 @@
-import { APIProvider, Map } from "@vis.gl/react-google-maps";
+import GMap from "./GMap";
+import Footer from "./Footer";
+import Options from "./Options";
 
 function App() {
-    const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-
     return (
-        <APIProvider apiKey={API_KEY}>
-            <Map
-                style={{ width: "100vw", height: "100vh" }}
-                defaultCenter={{ lat: 40.6401, lng: 22.9444 }}
-                defaultZoom={13}
-                gestureHandling={"greedy"}
-                disableDefaultUI={true}
-            />
-        </APIProvider>
+        <main className="relative h-screen">
+            <Options />
+            <GMap />
+            <Footer />
+        </main>
     );
 }
 
