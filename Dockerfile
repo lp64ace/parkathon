@@ -11,7 +11,5 @@ COPY . .
 # Expose the port that React app will use (default 80)
 EXPOSE 80
 
-# Build the React app for production
-# RUN npm run build
 # Command to run the app
 CMD ["node", "index.js"]
