@@ -12,5 +12,5 @@ app.listen(3000, () => {
 });
 
 parking.OpenStreetMapFetchRoads('146304012').then((data) => {
-	parking.GeographicDataToParkingSpaces(data);
+	parking.GeographicDataToParkingSpaces(data, 1000);
 });
