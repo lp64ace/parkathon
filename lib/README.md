@@ -87,6 +87,24 @@ parking.OpenStreetNodeInfo(57554537 /* Thessaloniki */).then((info) => {
 });
 ```
 
+* OpenStreetMapFetchNodesNamed: Returns a list of places with the specified name.
+	- params
+		- `name` | The name of the place we want to search
+	- return
+		- An array of places that match the name search query, with the following attributes:
+			`.name` | User readable name (e.g. 'Περαία').
+			`.display_name` | Full user readable name, in context (e.g. 'Περαία, Thermaikos Municipality, Thessaloniki Regional Unit, Central Macedonia, Macedonia and Thrace, 570 19, Greece').
+			`.osm_id` | (When applicable) The OpenStreeMap node id (can be used with the rest of the OpenStreetMap functions).
+			`.addresstype` | The type of the place (village/city/etc.).
+
+```js
+parking.OpenStreetMapFetchNodesNamed('Trilofos').then((data) => {
+	data.forEach((place) => {
+		console.log(place.display_name);
+	});
+});
+```
+
 Parking spot calculation in a region can be done using the `GeographicDataToParkingSpaces`.
 It expects data from the `OpenStreetMapFetchRoads` method and return an array of available parking spots.
 
