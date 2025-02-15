@@ -47,3 +47,61 @@ tree.Query(target, radius).forEach((pt) => {
 	console.log("Point", pt, "is within", radius, "meters of", target);
 })
 ```
+
+## Parking
+
+### Geographical Information
+
+Simple queries regarding the roads and geometrical elements of a region can be retrieved using the following functions:
+
+* OpenStreetMapFetchRoads: Fetches roads and geometrical data within a specified radius around a region.
+	- params
+		- `node` | The ID of the region or node for which to request information.
+		- `radius` | The search radius in meters.
+	- return
+		- An array of elements with the following attributes:
+			`.geometry` | An array of {lat, lon} objects representing the latitude and longitude of each road vertex.
+			`.tags` | A set of user-readable tags, such as the road's name, lane information, and parking restrictions.
+			`.nodes` | A list of adjacent nodes for each road element.
+
+```js
+import parking from './lib/parking.js';
+
+parking.OpenStreetMapFetchRoads(57554537 /* Thessaloniki */ , 1000).then((roads) => {
+	console.log(roads);
+});
+```
+
+* OpenStreetNodeInfo: A simpler version of OpenStreetMapFetchRoads that only returns the tags.
+	- params
+		- `node` | The ID of the region or node for which to request information.
+	- return 
+		- An array of elements with the following attributes:
+			`.tags` | A set of user-readable tags, such as the road's name, lane information, and parking restrictions.
+
+```js
+import parking from './lib/parking.js';
+
+parking.OpenStreetNodeInfo(57554537 /* Thessaloniki */).then((info) => {
+	console.log(info); /* `info[0].tags.name` Should contain the name of the node if applicable! */
+});
+```
+
+Parking spot calculation in a region can be done using the `GeographicDataToParkingSpaces`.
+It expects data from the `OpenStreetMapFetchRoads` method and return an array of available parking spots.
+
+Each parking spot is represented by four numbers.
+
+ * [0] Also known as the 'x' coordinate in a 2D plane when projecting the map of the parking spot.
+ * [1] Also known as the 'y' coordinate in a 2D plane when projecting the map of the parking spot.
+ * [2] The 'lon' representing the longitude of the parking spot.
+ * [3] The 'lat' representing the latitude of the parking spot.
+
+```js
+parking.OpenStreetMapFetchRoads(57554537 /* Thessaloniki */, 1000).then((road) => {
+	parking.OpenStreetNodeInfo(57554537 /* Thessaloniki */).then((info) => {
+		const spots = parking.GeographicDataToParkingSpaces(road);
+		console.log(spots.length, "spots in", info[0].tags.name);
+	});
+});
+```
