@@ -1,27 +1,8 @@
 import numpy as np
 import pandas as pd
-import mysql.connector
 import holidays
 from datetime import datetime
 
-def connect_to_db():
-    return mysql.connector.connect(
-        host="your_host",
-        user="your_user",
-        password="your_password",
-        database="your_database"
-    )
-
-def fetch(spotID):
-    conn = connect_to_db()
-    query = """
-    SELECT spotID, latitude, longitude, datetime, weather, isFree
-    FROM parking_history
-    WHERE spotID = %s
-    """
-    df = pd.read_sql_query(query, conn, params=(spotID,))
-    conn.close()
-    return df
 
 def preprocess(df):
     df['timestamp'] = pd.to_datetime(df['datetime'])
@@ -29,7 +10,7 @@ def preprocess(df):
     df[['conditions', 'temperature']] = df['weather'].str.extract(r'(\w+)\s+(\d+)C')
     df['conditions'] = df['conditions'].astype('category').cat.codes
     df['temperature'] = df['temperature'].astype(int)
-    df['availability'] = availability(df,7)
+    df['availability'] = availability(df, 7)
     return df
 
 def availability(df, k):
@@ -54,7 +35,6 @@ def availability(df, k):
     free = lastk.loc[lastk['isFree'] == 1, 'diff'].sum()
     
     return free/total if total > 0 else None
-
 
 def add_features(df):
     df['isWeekend'] = df.index.dayofweek >= 5
