@@ -1,4 +1,9 @@
-import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
+import {
+    APIProvider,
+    Map,
+    AdvancedMarker,
+    Pin,
+} from "@vis.gl/react-google-maps";
 import { useCallback, useState, useEffect } from "react";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -7,21 +12,25 @@ const INITIAL_CAMERA = {
     zoom: 12,
 };
 
-function GMap({ currentLocation }) {
+function GMap({ currentLocation, cameraLocation, marker }) {
     const [cameraProps, setCameraProps] = useState(INITIAL_CAMERA);
     const handleCameraChange = useCallback((ev) => {
         // console.log(ev);
         setCameraProps(ev.detail);
     }, []);
 
+    const markerLocation = (marker == 'parking') ? currentLocation : cameraLocation;
+
     useEffect(() => {
-        if (currentLocation) {
+        if (!markerLocation) {
+            return;
+        } else {
             setCameraProps((prev) => ({
                 ...prev,
-                center: currentLocation,
+                center: markerLocation,
             }));
         }
-    }, [currentLocation]);
+    }, [markerLocation]);
 
     return (
         <APIProvider apiKey={API_KEY}>
@@ -33,8 +42,14 @@ function GMap({ currentLocation }) {
                 disableDefaultUI={true}
                 mapId="MAP1"
             >
-                {currentLocation && (
-                    <AdvancedMarker position={currentLocation} />
+                {markerLocation && (
+                    <AdvancedMarker position={markerLocation}>
+                        <Pin
+                            background={"#0f9d58"}
+                            borderColor={"#006425"}
+                            glyphColor={"#60d98f"}
+                        />
+                    </AdvancedMarker>
                 )}
             </Map>
         </APIProvider>

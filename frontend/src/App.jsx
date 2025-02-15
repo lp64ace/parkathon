@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from "uuid";
 
 function App() {
     const [currentLocation, setCurrentLocation] = useState(null);
+    const [cameraLocation, setCameraLocation] = useState(null);
+    const [marker, setMarker] = useState(null);
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {
@@ -24,8 +26,17 @@ function App() {
     return (
         <main className="relative h-screen">
             <Options />
-            <GMap currentLocation={currentLocation} />
-            <Footer setCurrentLocation={setCurrentLocation} userId={userId} />
+            <GMap
+                currentLocation={currentLocation}
+                cameraLocation={cameraLocation}
+                marker={marker}
+            />
+            <Footer
+                setCurrentLocation={setCurrentLocation}
+                userId={userId}
+                setCameraLocation={setCameraLocation}
+                setMarker={setMarker}
+            />
         </main>
     );
 }
