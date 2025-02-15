@@ -4,55 +4,42 @@ The home directory for datastructures/algorithms and common API calls used by pa
 
 ## KDTree
 
-A (fast) tree representation of a point cloud that allows insert/deletion of points and queries to retrieve points in a radius of a target location
-Usage is straighforward.
+A fast tree structure for point clouds, supporting point insertion, deletion, and radius-based queries. The tree stores points as arrays of numbers using the Euclidean distance metric.
 
-Construction, the constructor takes a single argument representing the dimensions of each point, 
-points are stored as arrays of numbers and the metric that is used is the Euclidean metric.
+### Construction
+
+To create a KDTree, specify the dimensionality of the points:
 
 ```js
 import kDTree from 'kdtree.js';
 let tree = new kDTree(/* 2 */);
 ```
 
-Insert/Remove point, inserting a point can be done using two methods the `InsertPoint` method and the `EnsurePoint` method, 
-the later does not add a duplicate point if one is already in the tree!
-Removing a point can be done in the same way we insert a point.
+### Insert/Remove
+
+* InsertPoint: Inserts a new point to the tree, does not take duplicates into account!
+* EnsurePoint: Inserts a new point to the tree (if there is no other point with the same coordinates)!
+* RemovePoint: Removes a point from the tree if the point was in the tree!
 
 ```js
-import kDTree from 'kdtree.js';
-let tree = new kDTree(/* 2 */);
 tree.InsertPoint([2, 3]);
 tree.RemovePoint([2, 3]);
 ```
 
-Insert/Remove multiple points can be done using the helper functions `InsertPoints` and `EnsurePoints`.
+### Insert/Remove Multiple
+
+* InsertPoints/EnsurePoints: Insert multiple points (stored in an array) in the tree!
 
 ```js
-import kDTree from 'kdtree.js';
-let tree = new kDTree(/* 2 */);
-tree.InsertPoints([
-	[2, 3],
-	[5, 3],
-	[2, 5],
-	[8, 1],
-]);
-tree.EnsurePoints([
-	[7, 3],
-	[5, 3],
-	[0, 5],
-	[8, 1],
-]);
+tree.InsertPoints([[2, 3], [5, 3], [2, 5], [8, 1]]);
+tree.EnsurePoints([[7, 3], [5, 3], [0, 5], [8, 1]]);
 ```
 
-Quering can be done using a single function call and specifying the target location and a radius, 
-note that no assumption can be made of the order of the points that are returned.
+### Querying
+
+To query points within a given radius, use the `Query` method with a target location and a radius. The order of the results is not guaranteed.
 
 ```js
-import kDTree from 'kdtree.js';
-let tree = new kDTree(/* 2 */);
-tree.InsertPoints(...);
-
 let target = [5, 5];
 let radius = 5;
 
