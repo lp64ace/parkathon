@@ -30,20 +30,7 @@ describe("kDTree Basic", () => {
     });
 });
 
-describe("kDTree Advanced", () => {
-	const base = [
-		[ 3,  6],
-		[17, 15],
-		[13, 15],
-		[ 6, 12],
-		[ 9,  1],
-		[ 2,  7],
-		[10, 19]
-	];
-	
-	let tree;
-	
-	/**
+/**
 	 * Same as `strcmp(stringA, stringB)` in C but for points!
 	 */
 	function CmpPoints(a, b) {
@@ -77,6 +64,19 @@ describe("kDTree Advanced", () => {
 		
 		return result;
 	};
+
+describe("kDTree Advanced", () => {
+	const base = [
+		[ 3,  6],
+		[17, 15],
+		[13, 15],
+		[ 6, 12],
+		[ 9,  1],
+		[ 2,  7],
+		[10, 19]
+	];
+	
+	let tree;
 	
 	beforeEach(() => {
         tree = new kDTree();
@@ -184,6 +184,51 @@ describe("kDTree Advanced", () => {
 		
 		for (let radius = 1; radius <= 32; radius++) {
 			expect(tree.Query(point, radius).sort()).toEqual(QueryBruteForce(updated, point, radius).sort());
+		}
+    });
+});
+
+describe("kDTree Random", () => {
+	test("testcase #1", () => {
+		let tree = new kDTree();
+		
+		let points = [];
+		for (let i = 0; i < 10; i++) {
+			points.push([Math.random() * 100, Math.random() * 100]);
+		}
+		tree.InsertPoints(points);
+		for (let i = 0; i < 3; i++) {
+			const rm_idx = Math.max(Math.floor(Math.random() * points.length - 1), 0);
+			tree.RemovePoint(points[rm_idx]);
+			points = points.slice(0, rm_idx).concat(points.slice(rm_idx + 1));
+		}
+		
+		const point = [Math.random() * 100, Math.random() * 100];
+		
+		for (let radius = 1; radius <= 32; radius++) {
+			expect(tree.Query(point, radius).sort()).toEqual(QueryBruteForce(points, point, radius).sort());
+		}
+    });
+	
+	test("testcase #2", () => {
+		let tree = new kDTree();
+		
+		let points = [];
+		for (let i = 0; i < 1000; i++) {
+			points.push([Math.random() * 100, Math.random() * 100]);
+		}
+		tree.InsertPoints(points);
+		for (let i = 0; i < 333; i++) {
+			const rm_idx = Math.max(Math.floor(Math.random() * points.length - 1), 0);
+			
+			tree.RemovePoint(points[rm_idx]);
+			points = points.slice(0, rm_idx).concat(points.slice(rm_idx + 1));
+		}
+		
+		const point = [Math.random() * 100, Math.random() * 100];
+		
+		for (let radius = 1; radius <= 32; radius++) {
+			expect(tree.Query(point, radius).sort()).toEqual(QueryBruteForce(points, point, radius).sort());
 		}
     });
 });
