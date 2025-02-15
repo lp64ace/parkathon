@@ -12,6 +12,8 @@ class Cache {
                 /** Timestamp of cache should also be updated here. */
                 this.tree.InsertPoints(spots);
                 this.destiantion = destination;
+				
+				console.log(spots.length, "spots in", info[0].tags.name);
             });
         });
     }
@@ -20,7 +22,7 @@ class Cache {
     }
 };
 
-const destination = 57554537; // The Open Street Map node for the destination (Περαία).
+const destination = 146304012; // The Open Street Map node for the destination (Τρίλοφος).
 const cache = new Cache();
 
 cache.build(destination);
