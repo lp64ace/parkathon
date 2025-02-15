@@ -8,13 +8,9 @@ export default defineConfig({
     server: {
         host: true,
         // allowedHosts: [".ngrok-free.app", ".ngrok.io"],
-        port: 80,
     },
     build: {
         outDir: "dist",
         assetsDir: "assets",
-    },
-    preview: {
-        port: 80,
     },
 });
