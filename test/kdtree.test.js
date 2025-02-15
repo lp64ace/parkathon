@@ -1,4 +1,4 @@
-const kDTree = require('../lib/kdtree.js');
+import kDTree from '../lib/kdtree.js';
 
 describe("kDTree Basic", () => {
 	let tree;

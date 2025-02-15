@@ -1,16 +1,27 @@
-import express from 'express';
+import kDTree from './lib/kdtree.js';
 import parking from './lib/parking.js';
 
-const app = express();
+class Cache {
+    constructor() {
+        this.tree = new kDTree(/* 2 */);
+    }
+    build(destination) {
+        parking.OpenStreetMapFetchRoads(destination , 1000).then((road) => {
+            parking.OpenStreetNodeInfo(destination ).then((info) => {
+                const spots = parking.GeographicDataToParkingSpaces(road);
+                /** Timestamp of cache should also be updated here. */
+                this.tree.InsertPoints(spots);
+                this.destiantion = destination;
+            });
+        });
+    }
+    update() {
+        /** Database query to remove spots that are currently occupied or insert spots that un-parked! */
+    }
+};
 
-app.get('/', (req, res) => {
-	res.send('Hello from Dockerized Express!');
-});
+const destination = 57554537; // The Open Street Map node for the destination (Περαία).
+const cache = new Cache();
 
-app.listen(3000, () => {
-	console.log('Server running...');
-});
-
-parking.OpenStreetMapFetchRoads('146304012').then((data) => {
-	parking.GeographicDataToParkingSpaces(data, 1000);
-});
+cache.build(destination);
+cache.update();
