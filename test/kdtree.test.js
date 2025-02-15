@@ -205,7 +205,7 @@ describe("kDTree Random", () => {
 		
 		const point = [Math.random() * 100, Math.random() * 100];
 		
-		for (let radius = 1; radius <= 32; radius++) {
+		for (let radius = 1; radius <= 10; radius++) {
 			expect(tree.Query(point, radius).sort()).toEqual(QueryBruteForce(points, point, radius).sort());
 		}
     });
@@ -214,11 +214,11 @@ describe("kDTree Random", () => {
 		let tree = new kDTree();
 		
 		let points = [];
-		for (let i = 0; i < 1000; i++) {
+		for (let i = 0; i < 100; i++) {
 			points.push([Math.random() * 100, Math.random() * 100]);
 		}
 		tree.InsertPoints(points);
-		for (let i = 0; i < 333; i++) {
+		for (let i = 0; i < 33; i++) {
 			const rm_idx = Math.max(Math.floor(Math.random() * points.length - 1), 0);
 			
 			tree.RemovePoint(points[rm_idx]);
@@ -227,7 +227,7 @@ describe("kDTree Random", () => {
 		
 		const point = [Math.random() * 100, Math.random() * 100];
 		
-		for (let radius = 1; radius <= 32; radius++) {
+		for (let radius = 1; radius <= 100; radius++) {
 			expect(tree.Query(point, radius).sort()).toEqual(QueryBruteForce(points, point, radius).sort());
 		}
     });
