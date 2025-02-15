@@ -31,39 +31,39 @@ describe("kDTree Basic", () => {
 });
 
 /**
-	 * Same as `strcmp(stringA, stringB)` in C but for points!
-	 */
-	function CmpPoints(a, b) {
-		for (let axis = 0; axis < 2; axis++) {
-			if (Math.abs(a[axis] - b[axis]) > Number.EPSILON) {
-				return a[axis] - b[axis];
-			}
+ * Same as `strcmp(stringA, stringB)` in C but for points!
+ */
+function CmpPoints(a, b) {
+	for (let axis = 0; axis < 2; axis++) {
+		if (Math.abs(a[axis] - b[axis]) > Number.EPSILON) {
+			return a[axis] - b[axis];
 		}
-		return 0;
+	}
+	return 0;
+}
+
+/**
+ * Same as `dot(pointA, pointB)` in GLSL!
+ */
+function SquaredDistancePoints(a, b) {
+	let result = 0;
+	for (let axis = 0; axis < 2; axis++) {
+		result += (a[axis] - b[axis]) ** 2;
+	}
+	return result;
+}
+
+function QueryBruteForce (points, point, radius) {
+	let result = [];
+	
+	for (let pt of points) {
+		if (SquaredDistancePoints(pt, point) <= radius * radius) {
+			result.push(pt);
+		}
 	}
 	
-	/**
-	 * Same as `dot(pointA, pointB)` in GLSL!
-	 */
-	function SquaredDistancePoints(a, b) {
-		let result = 0;
-		for (let axis = 0; axis < 2; axis++) {
-			result += (a[axis] - b[axis]) ** 2;
-		}
-		return result;
-	}
-	
-	function QueryBruteForce (points, point, radius) {
-		let result = [];
-		
-		for (let pt of points) {
-			if (SquaredDistancePoints(pt, point) <= radius * radius) {
-				result.push(pt);
-			}
-		}
-		
-		return result;
-	};
+	return result;
+};
 
 describe("kDTree Advanced", () => {
 	const base = [
