@@ -23,8 +23,9 @@ COPY --from=frontend-build /app/frontend/dist /app/frontend/dist
 # Install serve to host the frontend
 RUN npm install -g serve
 
-# Expose the port that React app will use (default 80)
+# Expose the ports for frontend and backend
 EXPOSE 80
+EXPOSE 9000
 
-# Command to run the app
+# Command to run the app (backend and frontend)
 CMD ["sh", "-c", "node index.js & serve -s frontend/dist -l 80"]
