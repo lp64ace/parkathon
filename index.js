@@ -1,36 +1,29 @@
 import kDTree from './lib/kdtree.js';
 import parking from './lib/parking.js';
 
-class Cache {
-    constructor() {
-        this.tree = new kDTree(/* 2 */);
-    }
-    build(destination) {
-        parking.OpenStreetMapFetchRoads(destination , 1000).then((road) => {
-            parking.OpenStreetNodeInfo(destination ).then((info) => {
-				if (info.length && info[0].tags) {
-					const spots = parking.GeographicDataToParkingSpaces(road);
-					/** Timestamp of cache should also be updated here. */
-					this.tree.InsertPoints(spots);
-					this.destiantion = destination;
-					
-					console.log(spots.length, "spots in", info[0].tags.name, "TK", info[0].tags['addr:postcode']);
-				}
-            });
-        });
-    }
-    update() {
-        /** Database query to remove spots that are currently occupied or insert spots that un-parked! */
-    }
+import express from "express";
+import fetch from "node-fetch";
+import mysql from 'mysql2/promise';
+
+const prt = 9000;
+const app = express();
+
+const config = {
+	host: process.env.DB_HOST,
+	user: process.env.DB_USER,
+	password: process.env.DB_PASSWORD,
+	database: process.env.DB_NAME,
 };
 
-parking.OpenStreetMapFetchNodesNamed('Trilofos').then((data) => {
-	data.forEach((place) => {
-		if (place.osm_id) {
-			const cache = new Cache();
-
-			cache.build(place.osm_id);
-			cache.update();
-		}
-	});
+app.get('/tables', async (req, res) => {
+	try {
+		const connection = await mysql.createConnection(config);
+		const [rows] = await connection.query('SHOW TABLES');
+		res.json({ tables: rows.map(row => Object.values(row)[0]) });
+		await connection.end();
+	} catch (error) {
+		console.error('MySQL error', error);
+	}
 });
+
+app.listen(prt, () => console.log(`Backend running on port ${prt}`));

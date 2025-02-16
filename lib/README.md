@@ -60,9 +60,9 @@ Simple queries regarding the roads and geometrical elements of a region can be r
 		- `radius` | The search radius in meters.
 	- return
 		- An array of elements with the following attributes:
-			`.geometry` | An array of {lat, lon} objects representing the latitude and longitude of each road vertex.
-			`.tags` | A set of user-readable tags, such as the road's name, lane information, and parking restrictions.
-			`.nodes` | A list of adjacent nodes for each road element.
+			- `.geometry` | An array of {lat, lon} objects representing the latitude and longitude of each road vertex.
+			- `.tags` | A set of user-readable tags, such as the road's name, lane information, and parking restrictions.
+			- `.nodes` | A list of adjacent nodes for each road element.
 
 ```js
 import parking from './lib/parking.js';
@@ -77,7 +77,7 @@ parking.OpenStreetMapFetchRoads(57554537 /* Thessaloniki */ , 1000).then((roads)
 		- `node` | The ID of the region or node for which to request information.
 	- return 
 		- An array of elements with the following attributes:
-			`.tags` | A set of user-readable tags, such as the road's name, lane information, and parking restrictions.
+			- `.tags` | A set of user-readable tags, such as the road's name, lane information, and parking restrictions.
 
 ```js
 import parking from './lib/parking.js';
@@ -92,10 +92,10 @@ parking.OpenStreetNodeInfo(57554537 /* Thessaloniki */).then((info) => {
 		- `name` | The name of the place we want to search
 	- return
 		- An array of places that match the name search query, with the following attributes:
-			`.name` | User readable name (e.g. 'Περαία').
-			`.display_name` | Full user readable name, in context (e.g. 'Περαία, Thermaikos Municipality, Thessaloniki Regional Unit, Central Macedonia, Macedonia and Thrace, 570 19, Greece').
-			`.osm_id` | (When applicable) The OpenStreeMap node id (can be used with the rest of the OpenStreetMap functions).
-			`.addresstype` | The type of the place (village/city/etc.).
+			- `.name` | User readable name (e.g. 'Περαία').
+			- `.display_name` | Full user readable name, in context (e.g. 'Περαία, Thermaikos Municipality, Thessaloniki Regional Unit, Central Macedonia, Macedonia and Thrace, 570 19, Greece').
+			- `.osm_id` | (When applicable) The OpenStreeMap node id (can be used with the rest of the OpenStreetMap functions).
+			- `.addresstype` | The type of the place (village/city/etc.).
 
 ```js
 parking.OpenStreetMapFetchNodesNamed('Trilofos').then((data) => {
