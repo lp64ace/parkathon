@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+    frontend:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "80:80"
+        depends_on:
+            - backend
+
+    backend:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        environment:
+            - DB_HOST=data
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
+            - DB_NAME=${DB_NAME}
+        ports:
+            - "9000:9000"
+        depends_on:
+            - data
+
+    data:
+        image: mysql:8.0
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_DATABASE: ${DB_NAME}
+            MYSQL_USER: ${DB_USER}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+        volumes:
+            - db-data:/var/lib/mysql
+            - ./data/parkathon.sql:/docker-entrypoint-initdb.d/init.sql
+        ports:
+            - "3306:3306"
+        networks:
+            - app-network
+
+volumes:
+    db-data:
+
+networks:
+    app-network:
+        driver: bridge
