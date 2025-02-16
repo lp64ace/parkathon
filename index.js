@@ -15,15 +15,15 @@ const config = {
 	database: process.env.DB_NAME,
 };
 
-try {
-	const connection = await mysql.createConnection(config);
-
-	const [rows] = await connection.query('SHOW TABLES');
-	rows.forEach(row => {
-		console.log(Object.values(row)[0]);
-	});
-} catch (error) {
-	console.error('MySQL error', error);
-}
+app.get('/tables', async (req, res) => {
+	try {
+		const connection = await mysql.createConnection(config);
+		const [rows] = await connection.query('SHOW TABLES');
+		res.json({ tables: rows.map(row => Object.values(row)[0]); });
+		await connection.end();
+	} catch (error) {
+		console.error('MySQL error', error);
+	}
+});
 
 app.listen(prt, () => console.log(`Backend running on port ${prt}`));
