@@ -15,11 +15,15 @@ const config = {
 	database: process.env.DB_NAME,
 };
 
-const connection = await mysql.createConnection(config);
+try {
+	const connection = await mysql.createConnection(config);
 
-const [rows] = await connection.query('SHOW TABLES');
-rows.forEach(row => {
-	console.log(Object.values(row)[0]);
-});
+	const [rows] = await connection.query('SHOW TABLES');
+	rows.forEach(row => {
+		console.log(Object.values(row)[0]);
+	});
+} catch (error) {
+	console.error('MySQL error', error);
+}
 
 app.listen(prt, () => console.log(`Backend running on port ${prt}`));
