@@ -1,4 +1,6 @@
 CREATE DATABASE IF NOT EXISTS `parkathon` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';
+GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%';
 USE `parkathon`;
 
 -- Drop existing tables
