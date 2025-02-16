@@ -1,3 +1,11 @@
+# Build frontend
+FROM node:18-alpine as frontend-build
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ ./
+RUN npm run build
+
 FROM node:18-alpine
 WORKDIR /app
 
@@ -8,10 +16,16 @@ RUN npm install
 
 # Copy the rest of the application files into the container
 COPY . .
-# Expose the port that React app will use (default 80)
-EXPOSE 80
 
-# Build the React app for production
-# RUN npm run build
-# Command to run the app
-CMD ["node", "index.js"]
+# Copy built frontend files
+COPY --from=frontend-build /app/frontend/dist /app/frontend/dist
+
+# Install serve to host the frontend
+RUN npm install -g serve
+
+# Expose the ports for frontend and backend
+EXPOSE 80
+EXPOSE 9000
+
+# Command to run the app (backend and frontend)
+CMD ["sh", "-c", "node index.js & serve -s frontend/dist -l 80"]

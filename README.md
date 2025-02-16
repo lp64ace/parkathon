@@ -13,3 +13,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Apendix
 For more details please refer to `docs/parkathon.pdf`
+
+## Deploy
+
+How to deploy with docker-compose
+
+```
+docker-compose build
+docker-compose up
+```
