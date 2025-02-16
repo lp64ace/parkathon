@@ -4,6 +4,7 @@ import parking from './lib/parking.js';
 import express from "express";
 import fetch from "node-fetch";
 
+const prt = 9000;
 const app = express();
 
 app.get("/api/maps", async (req, res) => {
@@ -24,4 +25,4 @@ app.get("/api/maps", async (req, res) => {
     }
 });
 
-app.listen(9000, () => console.log(`Backend running on port ${PORT}`));
+app.listen(prt, () => console.log(`Backend running on port ${prt}`));
