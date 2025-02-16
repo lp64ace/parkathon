@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
-from model import train_model, parkingChance
-from preprocessing import fetch_all, fetch, preprocess, add_features
 from kdtree import kDTree
-from db import get_spotID
+from db import fetch, fetch_all
+from preprocessing import preprocess, add_features
+from model import train_model, parkingChance
 
 app = Flask(__name__)
 
@@ -15,10 +15,9 @@ def predict():
     weather     = data['weather']
     k           = data.get('k', 5)  # default to 5 nearest spots
 
+    tree = kDTree(dimensions=2)
     all_spots = fetch_all()
     all_spots_coords = all_spots[['long', 'lat']].values
-
-    tree = kDTree(dimensions=2)
     tree.InsertPoints(all_spots_coords)
     lon, lat = map(float, destination.split(','))
     nearest_spots = tree.Query([lon, lat], k)
@@ -27,9 +26,9 @@ def predict():
     for spot in nearest_spots:
 
         spot_lon, spot_lat = spot
-        model = train_model(spot_lon, spot_lan)  # train model for each spot
-        probability = parkingChance(model, spotID, f"{spot_lon},{spot_lat}", timestamp, weather)
-        results.append({'spotID': spotID, 'coords': f"{spot_lon},{spot_lat}", 'probability': probability})
+        model = train_model(spot_lon, spot_lat)  # train a model for each spot
+        probability = parkingChance(model, timestamp, weather)
+        results.append({'coords': f"{spot_lon},{spot_lat}", 'probability': probability})
 
     return jsonify(results)
 

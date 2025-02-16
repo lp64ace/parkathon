@@ -1,2 +1,1 @@
-- feature/label extraction
 - make sure API call of prediction works 
