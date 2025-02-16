@@ -1,0 +1,1 @@
+- make sure API call of prediction works 
