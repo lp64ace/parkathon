@@ -19,7 +19,7 @@ app.get('/tables', async (req, res) => {
 	try {
 		const connection = await mysql.createConnection(config);
 		const [rows] = await connection.query('SHOW TABLES');
-		res.json({ tables: rows.map(row => Object.values(row)[0]); });
+		res.json({ tables: rows.map(row => Object.values(row)[0]) });
 		await connection.end();
 	} catch (error) {
 		console.error('MySQL error', error);
