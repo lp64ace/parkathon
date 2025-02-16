@@ -1,36 +1,27 @@
 import kDTree from './lib/kdtree.js';
 import parking from './lib/parking.js';
 
-class Cache {
-    constructor() {
-        this.tree = new kDTree(/* 2 */);
-    }
-    build(destination) {
-        parking.OpenStreetMapFetchRoads(destination , 1000).then((road) => {
-            parking.OpenStreetNodeInfo(destination ).then((info) => {
-				if (info.length && info[0].tags) {
-					const spots = parking.GeographicDataToParkingSpaces(road);
-					/** Timestamp of cache should also be updated here. */
-					this.tree.InsertPoints(spots);
-					this.destiantion = destination;
-					
-					console.log(spots.length, "spots in", info[0].tags.name, "TK", info[0].tags['addr:postcode']);
-				}
-            });
-        });
-    }
-    update() {
-        /** Database query to remove spots that are currently occupied or insert spots that un-parked! */
-    }
-};
+import express from "express";
+import fetch from "node-fetch";
 
-parking.OpenStreetMapFetchNodesNamed('Trilofos').then((data) => {
-	data.forEach((place) => {
-		if (place.osm_id) {
-			const cache = new Cache();
+const app = express();
 
-			cache.build(place.osm_id);
-			cache.update();
-		}
-	});
+app.get("/api/maps", async (req, res) => {
+	const { lat, lon, place } = req.query;
+
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?${new URLSearchParams({
+        key: process.env.VITE_GOOGLE_MAPS_API_KEY,
+        address: `${lat},${lon}`,
+    })}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error("Error fetching Google Maps API:", error);
+        res.status(500).json({ error: "Failed to fetch Google Maps data" });
+    }
 });
+
+app.listen(9000, () => console.log(`Backend running on port ${PORT}`));
