@@ -112,8 +112,8 @@ Each parking spot is represented by four numbers.
 
  * [0] Also known as the 'x' coordinate in a 2D plane when projecting the map of the parking spot.
  * [1] Also known as the 'y' coordinate in a 2D plane when projecting the map of the parking spot.
- * [2] The 'lon' representing the longitude of the parking spot.
- * [3] The 'lat' representing the latitude of the parking spot.
+ * [2] The 'lat' representing the latitude of the parking spot.
+ * [3] The 'lon' representing the longitude of the parking spot.
 
 ```js
 parking.OpenStreetMapFetchRoads(57554537 /* Thessaloniki */, 1000).then((road) => {
