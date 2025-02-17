@@ -23,7 +23,7 @@ CREATE TABLE `destination` (
   `destination_id` INT(11) NOT NULL AUTO_INCREMENT,
   `user_id` INT(11) NOT NULL,
   `lat` DECIMAL(10,7) NOT NULL,
-  `long` DECIMAL(10,7) NOT NULL,
+  `lon` DECIMAL(10,7) NOT NULL,
   `visited` INT(11) NOT NULL DEFAULT 1,
   PRIMARY KEY (`destination_id`),
   CONSTRAINT `fk_destination_user` FOREIGN KEY (`user_id`) 
@@ -35,7 +35,7 @@ CREATE TABLE `parking` (
   `parking_id` INT(11) NOT NULL AUTO_INCREMENT,
   `user_id` INT(11) NOT NULL,
   `lat` DECIMAL(10,7) NOT NULL,
-  `long` DECIMAL(10,7) NOT NULL,
+  `lon` DECIMAL(10,7) NOT NULL,
   `start_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `end_time` TIMESTAMP NULL DEFAULT NULL,
   `weather` ENUM('Sunny', 'Rainy', 'Cloudy', 'Snowy', 'Foggy') DEFAULT NULL,
