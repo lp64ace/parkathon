@@ -30,6 +30,17 @@ services:
         networks:
             - app-network
 
+    python-service:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "5000:5000"
+        depends_on:
+            - parkathon-data
+        networks:
+            - app-network
+
     parkathon-data:
         image: mysql:8.0
         environment:
@@ -43,7 +54,7 @@ services:
         ports:
             - "3306:3306"
         networks:
-            - app-network  # Ensure the MySQL service is connected to the same network
+            - app-network
 
 volumes:
     db-data:
