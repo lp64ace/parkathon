@@ -41,7 +41,7 @@ RUN npm install -g serve
 # Expose the ports for frontend, backend, and Python service
 EXPOSE 80
 EXPOSE 9000
-EXPOSE 5000
+EXPOSE 9001
 
 # Command to run the app (backend, frontend, and Python service)
 CMD ["sh", "-c", "node index.js & serve -s frontend/dist -l 80 & python /app/python/app.py"]

@@ -13,6 +13,7 @@ services:
             - VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}
         depends_on:
             - backend
+            - python-service
 
     backend:
         build:
@@ -35,9 +36,10 @@ services:
             context: .
             dockerfile: Dockerfile
         ports:
-            - "5000:5000"
+            - "9001:9001"
         depends_on:
             - parkathon-data
+            - backend
         networks:
             - app-network
 

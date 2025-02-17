@@ -17,7 +17,7 @@ def predict():
 
     # POST request to the /park/find endpoint
     lat, lon = map(float, destination.split(','))
-    response = requests.post('http://localhost:9001/park/find', json={
+    response = requests.post('http://localhost:9000/park/find', json={
         'lat': lat,
         'lon': lon,
         'rad': radius
@@ -40,4 +40,4 @@ def predict():
     return jsonify(results)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=9001)
