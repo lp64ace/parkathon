@@ -115,9 +115,8 @@ app.post('/user/login', async (req, res) => {
 
         // Generate JWT Token
         const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1h' });
-
-        // Set token in HTTP-only cookie
-        res.cookie('user_token', token, { httpOnly: true, secure: false });
+		
+        res.cookie('user_token', token, { secure: false });
 
         res.json({ success: true, message: "Login successful", token });
 

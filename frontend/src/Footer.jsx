@@ -2,12 +2,22 @@ import { CarFront, CircleParking, ArrowDown, X, Search } from "lucide-react";
 import { sendLocation } from "./api/sendLocation";
 import { getParkingLocations } from "./api/getParkingLocations";
 import { useState, useEffect } from "react";
+import SignupLogin from "./SignupLogin";
+import Cookies from "js-cookie";
 
 function Footer({ setCurrentLocation, userId, setCameraLocation, setMarker }) {
     const [driveOpen, setDriveOpen] = useState(false);
     const [destinationInput, setDestinationInput] = useState("");
+    const [showSignupLogin, setShowSignupLogin] = useState(false);
 
     const handleParkClick = () => {
+        const userToken = Cookies.get("user_token");
+
+        if (!userToken) {
+            setShowSignupLogin(true);
+            return;
+        }
+
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -67,6 +77,9 @@ function Footer({ setCurrentLocation, userId, setCameraLocation, setMarker }) {
 
     return (
         <div className="fixed bottom-0 z-10 flex w-screen flex-col items-center">
+            {showSignupLogin && <div className="fixed inset-0 z-50 flex items-center justify-center">
+                {SignupLogin ? <SignupLogin /> : null}
+            </div>}
             <div className="flex h-6 w-24 translate-y-[2px] items-center justify-center rounded-t-2xl border-2 border-b-0 border-slate-700 bg-white">
                 <ArrowDown size={20} color="#2e2e2e" />
             </div>

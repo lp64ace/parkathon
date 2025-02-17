@@ -3,6 +3,7 @@ FROM node:18-alpine as frontend-build
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm install
+RUN npm install js-cookie
 COPY frontend/ ./
 ARG VITE_GOOGLE_MAPS_API_KEY
 ENV VITE_GOOGLE_MAPS_API_KEY=$VITE_GOOGLE_MAPS_API_KEY

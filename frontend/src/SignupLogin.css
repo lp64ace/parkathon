@@ -62,25 +62,6 @@
     font-size: 19px;
 }
 
-.submit{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: auto;
-    width: 120px;
-    height: 45px;
-    color: white;
-    background: black;
-    border-radius: 50px;
-    font-size: 19px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.submit:hover{
-    background: #676767;
-}
-
 .options-container{
     display: flex;
     gap: 30px;
