@@ -171,7 +171,7 @@ app.get('/park/simulate', async (req, res) => {
 		return res.status(400).json({ error: "Latitude and longitude are required" });
 	}
 	
-	rad = rad || 1000; // By default the radius is 1km
+	rad = rad || 100; // By default the radius is 100m
 	
 	const RandomWithinRadius = (in_lat, in_lon, in_rad) => {
 		const R_lat = (in_rad / 111320); // 1 degree ≈ 111.32 km
