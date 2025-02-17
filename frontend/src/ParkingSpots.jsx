@@ -3,6 +3,7 @@ import { useState } from "react";
 import { getActiveParkingSpots } from "./api/getActiveParkingSpots";
 import { vacateParkingSpot } from "./api/vacateParkingSpot";
 import CircularProgress from "@mui/material/CircularProgress";
+import { formatCoordinates } from "./utils/formatCoordinates";
 
 function ParkingSpots({ userId }) {
     const [activeParkingSpotsOpen, setActiveParkingSpotsOpen] = useState(false);
@@ -13,15 +14,17 @@ function ParkingSpots({ userId }) {
         try {
             setIsLoading(true);
             setActiveParkingSpotsOpen(true);
-            // const spots = await getActiveParkingSpots(userId);
-            // setActiveParkingSpots(spots);
+            let spots = await getActiveParkingSpots(userId);
+            spots = formatCoordinates(spots);
+            setActiveParkingSpots(spots);
 
             //Mock data
-            const spots = [
-                { lat: 37.9838, lng: 23.7275, parking_id: "p1" },
-                { lat: 37.9848, lng: 23.7285, parking_id: "p2" },
-                { lat: 37.9858, lng: 23.7295, parking_id: "p3" },
-            ];
+            // const spots = [
+            //     { lat: 37.9838, lng: 23.7275, parking_id: "p1" },
+            //     { lat: 37.9848, lng: 23.7285, parking_id: "p2" },
+            //     { lat: 37.9858, lng: 23.7295, parking_id: "p3" },
+            // ];
+
             const spotsWithNames = await Promise.all(
                 spots.map(async (spot) => {
                     const streetName = await getStreetName(spot.lat, spot.lng);

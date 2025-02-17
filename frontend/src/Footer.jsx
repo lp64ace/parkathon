@@ -2,7 +2,8 @@ import { CarFront, CircleParking, ArrowDown, X, Search } from "lucide-react";
 import { occupyPark } from "./api/occupyPark";
 import { getParkingLocations } from "./api/getParkingLocations";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { formatCoordinates } from "./utils/formatCoordinates";
 
 function Footer({
     setCurrentLocation,
@@ -79,11 +80,12 @@ function Footer({
                 setCameraLocation(location);
 
                 try {
-                    const parkingLocations = await getParkingLocations(
+                    let parkingLocations = await getParkingLocations(
                         location.lat,
                         location.lng,
                         50,
                     );
+                    parkingLocations = formatCoordinates(parkingLocations);
                     setParkingLocations(parkingLocations);
                 } catch (error) {
                     console.error("Error getting parking locations:", error);
@@ -163,7 +165,7 @@ function Footer({
                                                 )
                                             }
                                             onKeyDown={(e) => {
-                                                if (e.key === 'Enter') {
+                                                if (e.key === "Enter") {
                                                     handleSearchButton();
                                                 }
                                             }}
