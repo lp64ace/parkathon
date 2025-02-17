@@ -197,7 +197,7 @@ app.get('/park/simulate', async (req, res) => {
 			const {
 				lat,
 				lon
-			} RandomWithinRadius(q_lat, q_lon, rad);
+			} = RandomWithinRadius(q_lat, q_lon, rad);
 			const [result] = await conn.execute(
 				'INSERT INTO parking (user_id, lat, lon) VALUES (?, ?, ?)',
 				[user, lat, lon]
