@@ -197,9 +197,10 @@ app.get('/park/simulate', async (req, res) => {
 			const { x, y } = RandomWithinRadius(lat, lon, rad);
 			const [result] = await conn.execute(
 				'INSERT INTO parking (user_id, lat, lon) VALUES (?, ?, ?)',
-				[user, lat, lon]
+				[user, x, y]
 			);
 			fake.push(result.insertId);
+			console.log(result);
 		}
 		
 		/** Less than 10% of the occupied parking spots will be released! */
@@ -207,10 +208,11 @@ app.get('/park/simulate', async (req, res) => {
 		
 		for (let i = 0; i < fake.length * free; i++) {
 			const id = fake[Math.floor(Math.random() * fake.length)];
-			await conn.execute(
+			const [result] = await conn.execute(
 				'UPDATE parking SET end_time = NOW() WHERE parking_id = ? AND user_id = ? AND end_time IS NULL',
 				[id, user]
 			);
+			console.log(result);
 		}
 		
 		await conn.end();
