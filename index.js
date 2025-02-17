@@ -174,8 +174,8 @@ app.get('/park/simulate', async (req, res) => {
 	rad = rad || 1000; // By default the radius is 1km
 	
 	const RandomWithinRadius = (in_lat, in_lon, in_rad) => {
-		const R_lat = (radiusMeters / 111320); // 1 degree ≈ 111.32 km
-		const R_lon = (radiusMeters / (111320 * Math.cos(in_lat * (Math.PI / 180))));
+		const R_lat = (in_rad / 111320); // 1 degree ≈ 111.32 km
+		const R_lon = (in_rad / (111320 * Math.cos(in_lat * (Math.PI / 180))));
 		return {
 			lat: in_lat + (Math.random() - 0.5) * R_lat * 2,
 			lon: in_lon + (Math.random() - 0.5) * R_lon * 2,
