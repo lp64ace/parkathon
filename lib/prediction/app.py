@@ -1,6 +1,6 @@
+import requests
 from flask import Flask, request, jsonify
-from kdtree import kDTree
-from db import fetch, fetch_all
+from db import fetch
 from preprocessing import preprocess, add_features
 from model import train_model, parkingChance
 
@@ -13,19 +13,26 @@ def predict():
     destination = data['coords']
     timestamp   = data['timestamp']
     weather     = data['weather']
-    k           = data.get('k', 5)  # default to 5 nearest spots
+    radius      = data.get('k', 50)  # default to 50 meters
 
-    tree = kDTree(dimensions=2)
-    all_spots = fetch_all()
-    all_spots_coords = all_spots[['lon', 'lat']].values
-    tree.InsertPoints(all_spots_coords)
-    lon, lat = map(float, destination.split(','))
-    nearest_spots = tree.Query([lon, lat], k)
+    # POST request to the /park/find endpoint
+    lat, lon = map(float, destination.split(','))
+    response = requests.post('http://localhost:9001/park/find', json={
+        'lat': lat,
+        'lon': lon,
+        'rad': radius
+    })
+
+    if response.status_code != 200:
+        return jsonify({'error': 'Failed to fetch parking spots'}), 500
+
+    nearest_spots = response.json()
 
     results = []
     for spot in nearest_spots:
 
-        spot_lon, spot_lat = spot
+        spot_lon = spot['lon']
+        spot_lat = spot['lat']
         model = train_model(spot_lon, spot_lat)  # train a model for each spot
         probability = parkingChance(model, timestamp, weather)
         results.append({'coords': f"{spot_lon},{spot_lat}", 'probability': probability})

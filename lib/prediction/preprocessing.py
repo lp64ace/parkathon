@@ -3,6 +3,7 @@ import pandas as pd
 import holidays
 from datetime import datetime, timedelta
 
+# splits df into two dataframes, one for the start (label 0) and one for the end of the trips (label 1)
 def preprocess(df):
     df1 = pd.DataFrame()
     df2 = pd.DataFrame()
@@ -25,7 +26,7 @@ def preprocess(df):
 
     return df1, df2
 
-# creates new features
+# creates new features out of a timestamp
 def add_features(df):
     df['isWeekend'] = df['time'].dt.dayofweek >= 5
     df['isHoliday'] = df['time'].apply(lambda x: x in holidays.GR())  # opa argies
