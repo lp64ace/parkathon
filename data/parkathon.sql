@@ -42,3 +42,5 @@ CREATE TABLE `parking` (
   CONSTRAINT `fk_parking_user` FOREIGN KEY (`user_id`) 
   REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `user` (`name`, `email`, `password`) VALUES ('demo', 'demo@example.com', 'demo');
