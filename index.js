@@ -194,10 +194,13 @@ app.get('/park/simulate', async (req, res) => {
 		 * Some people might end up parking on the sea... that shouldn't really be a problem though!
 		 */
 		for (let i = 0; i < spot.length * 0.9; i++) {
-			const { x, y } = RandomWithinRadius(lat, lon, rad);
+			const {
+				lat,
+				lon
+			} out = RandomWithinRadius(lat, lon, rad);
 			const [result] = await conn.execute(
 				'INSERT INTO parking (user_id, lat, lon) VALUES (?, ?, ?)',
-				[user, x, y]
+				[user, out.lat, out.lon]
 			);
 			fake.push(result.insertId);
 			console.log(result);
