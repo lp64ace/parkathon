@@ -1,5 +1,7 @@
 Flask
+requests
+mysql-connector-python
 pandas
 numpy
-mysql-connector-python
+holidays
 scikit-learn

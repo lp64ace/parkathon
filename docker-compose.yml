@@ -13,6 +13,7 @@ services:
             - VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}
         depends_on:
             - backend
+            - python-service
 
     backend:
         build:
@@ -30,6 +31,18 @@ services:
         networks:
             - app-network
 
+    python-service:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "9001:9001"
+        depends_on:
+            - parkathon-data
+            - backend
+        networks:
+            - app-network
+
     parkathon-data:
         image: mysql:8.0
         environment:
@@ -43,7 +56,7 @@ services:
         ports:
             - "3306:3306"
         networks:
-            - app-network  # Ensure the MySQL service is connected to the same network
+            - app-network
 
 volumes:
     db-data:
