@@ -1,7 +1,5 @@
 import requests
 from flask import Flask, request, jsonify
-from db import fetch
-from preprocessing import preprocess, add_features
 from model import train_model, parkingChance
 
 app = Flask(__name__)

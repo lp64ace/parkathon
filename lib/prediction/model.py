@@ -1,5 +1,6 @@
+from db import fetch
+from preprocessing import preprocess, add_features
 from sklearn.ensemble import RandomForestClassifier
-from preprocessing import fetch, preprocess, add_features, availability
 from datetime import datetime
 import pandas as pd
 import holidays
