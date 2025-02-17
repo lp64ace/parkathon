@@ -3,6 +3,7 @@ import Footer from "./Footer";
 import Options from "./Options";
 import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
+import ParkingSpots from "./ParkingSpots";
 
 function App() {
     const [currentLocation, setCurrentLocation] = useState(null);
@@ -27,6 +28,7 @@ function App() {
     return (
         <main className="relative h-screen">
             <Options />
+            <ParkingSpots />
             <GMap
                 currentLocation={currentLocation}
                 cameraLocation={cameraLocation}

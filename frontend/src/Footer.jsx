@@ -54,7 +54,7 @@ function Footer({
 
         const geocoder = new window.google.maps.Geocoder();
 
-        geocoder.geocode({ address: destinationInput }, (results, status) => {
+        geocoder.geocode({ address: destinationInput }, async (results, status) => {
             if (status === "OK") {
                 const location = {
                     lat: results[0].geometry.location.lat(),
@@ -62,9 +62,12 @@ function Footer({
                 };
                 console.log("Found location:", location);
                 setCameraLocation(location);
-                setParkingLocations(
-                    getParkingLocations(location.lat, location.lng, 50),
-                );
+                try {
+                    const parkingLocations = await getParkingLocations(location.lat, location.lng, 50);
+                    setParkingLocations(parkingLocations);
+                } catch (error) {
+                    console.error("Error getting parking locations:", error);
+                }
 
                 // Mock data
                 // setParkingLocations([

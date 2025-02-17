@@ -27,7 +27,7 @@ app.post('/user/signup', async (req, res) => {
 	
 });
 
-app.post('/park/list/active', async (req, res) => {
+app.get('/park/list/active', async (req, res) => {
 	let {
 		user,
 	} = req.query;
