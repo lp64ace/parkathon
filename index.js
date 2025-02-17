@@ -42,13 +42,16 @@ app.get('/park/find', async (req, res) => {
 		return res.status(400).json({ error: "Latitude and longitude are required" });
 	}
 	
-	rad = rad || 100; // By default the radius is 100m
+	rad = rad || 50; // By default the radius is 50m
 	
 	try {
 		const tree = new kDTree();
 		const conn = await mysql.createConnection(config);
 		const data = await parking.OpenStreetMapFetchRoadsAt(lat, lon, rad);
 		const spot = parking.GeographicDataToParkingSpaces(data);
+		
+		tree.InsertPoints(spot);
+		
 		const [rows] = await conn.query('SELECT * FROM parking WHERE start_time <= NOW() AND end_time IS NULL;');
 		rows.forEach((entry) => {
 			/** Remove the nearest parking spot in a radius of 12m (the distance of two cars). */
@@ -64,7 +67,6 @@ app.get('/park/find', async (req, res) => {
 				lon: lon,
 		}), rad));
 	} catch (error) {
-		console.log(error);
 		return res.status(500).json({ error: "Failed to fetch parking information near location" });
 	}
 });
