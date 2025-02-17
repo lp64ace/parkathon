@@ -162,12 +162,12 @@ app.get('/park/find', async (req, res) => {
 
 app.get('/park/simulate', async (req, res) => {
 	let {
-		lat,
-		lon,
+		q_lat,
+		q_lon,
 		rad,
 	} = req.query;
 	
-	if (!lat || !lon) {
+	if (!q_lat || !q_lon) {
 		return res.status(400).json({ error: "Latitude and longitude are required" });
 	}
 	
@@ -184,7 +184,7 @@ app.get('/park/simulate', async (req, res) => {
 	
 	try {
 		const conn = await mysql.createConnection(config);
-		const data = await parking.OpenStreetMapFetchRoadsAt(lat, lon, rad);
+		const data = await parking.OpenStreetMapFetchRoadsAt(q_lat, q_lon, rad);
 		const spot = parking.GeographicDataToParkingSpaces(data);
 		
 		const fake = [];
@@ -197,13 +197,12 @@ app.get('/park/simulate', async (req, res) => {
 			const {
 				lat,
 				lon
-			} out = RandomWithinRadius(lat, lon, rad);
+			} RandomWithinRadius(q_lat, q_lon, rad);
 			const [result] = await conn.execute(
 				'INSERT INTO parking (user_id, lat, lon) VALUES (?, ?, ?)',
-				[user, out.lat, out.lon]
+				[user, lat, lon]
 			);
 			fake.push(result.insertId);
-			console.log(result);
 		}
 		
 		/** Less than 10% of the occupied parking spots will be released! */
