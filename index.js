@@ -1,12 +1,15 @@
 import kDTree from './lib/kdtree.js';
 import parking from './lib/parking.js';
 
+// import 'dotenv/config'; // Automatically loads .env
+
 import express from "express";
 import fetch from "node-fetch";
 import mysql from 'mysql2/promise';
 
 const prt = 9000;
 const app = express();
+
 
 const config = {
 	host: process.env.DB_HOST,
@@ -160,7 +163,24 @@ app.get('/park/find', async (req, res) => {
 	}
 });
 
-app.get('/park/simulate', async (req, res) => {
+app.get('/park/demo/clean', async (req, res) => {
+	const user = 1;
+	
+	try {
+		const conn = await mysql.createConnection(config);
+		const [result] = await conn.execute(
+			'DELETE FROM parking WHERE user_id = ?',
+			[user]
+		);
+		await conn.end();
+		
+		return res.json(result);
+	} catch (error) {
+		return res.status(500).json({ error: "Failed to clean demo parking locations" });
+	}
+});
+
+app.get('/park/demo/simulate', async (req, res) => {
 	let {
 		q_lat,
 		q_lon,
@@ -193,11 +213,13 @@ app.get('/park/simulate', async (req, res) => {
 		/**
 		 * Some people might end up parking on the sea... that shouldn't really be a problem though!
 		 */
-		for (let i = 0; i < spot.length * 0.9; i++) {
+		const mark = Math.floor(spot.length * (0.9 + Math.random() * 0.1));
+		
+		for (let i = 0; i < mark; i++) {
 			const {
 				lat,
 				lon
-			} = RandomWithinRadius(q_lat, q_lon, rad);
+			} = RandomWithinRadius(parseFloat(q_lat), parseFloat(q_lon), rad);
 			const [result] = await conn.execute(
 				'INSERT INTO parking (user_id, lat, lon) VALUES (?, ?, ?)',
 				[user, lat, lon]
@@ -208,18 +230,22 @@ app.get('/park/simulate', async (req, res) => {
 		/** Less than 10% of the occupied parking spots will be released! */
 		const free = Math.floor(fake.length * Math.random() * 0.1);
 		
-		for (let i = 0; i < fake.length * free; i++) {
+		for (let i = 0; i < free; i++) {
 			const id = fake[Math.floor(Math.random() * fake.length)];
 			const [result] = await conn.execute(
 				'UPDATE parking SET end_time = NOW() WHERE parking_id = ? AND user_id = ? AND end_time IS NULL',
 				[id, user]
 			);
-			console.log(result);
 		}
 		
 		await conn.end();
+		
+		return res.json({
+			total: spot.length,
+			count: mark,
+			freed: free
+		});
 	} catch (error) {
-		console.log(error);
 		return res.status(500).json({ error: "Failed to simulate parking near location" });
 	}
 });
