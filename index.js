@@ -160,6 +160,7 @@ app.get('/park/find', async (req, res) => {
 				lon: lon,
 		}), rad));
 	} catch (error) {
+		console.log(error);
 		return res.status(500).json({ error: "Failed to fetch parking information near location" });
 	}
 });
