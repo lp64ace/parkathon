@@ -15,6 +15,9 @@ WORKDIR /app
 COPY package*.json ./
 # Install dependencies
 RUN npm install
+RUN npm install express mysql2 bcrypt jsonwebtoken cookie-parser dotenv cors
+
+COPY .env .env
 
 # Copy the rest of the application files into the container
 COPY . .

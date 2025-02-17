@@ -2,11 +2,25 @@ import kDTree from './lib/kdtree.js';
 import parking from './lib/parking.js';
 
 import express from "express";
-import fetch from "node-fetch";
 import mysql from 'mysql2/promise';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
+import cors from 'cors';
 
+dotenv.config();
 const prt = 9000;
 const app = express();
+const JWT_SECRET = process.env.JWT_SECRET || 'default_secret';
+
+app.use(express.json());
+app.use(cookieParser());
+app.use(cors({
+	origin: 'http://localhost',
+	methods: 'GET,POST,PUT,DELETE',
+	credentials: true
+  }));
 
 const config = {
 	host: process.env.DB_HOST,
@@ -15,12 +29,117 @@ const config = {
 	database: process.env.DB_NAME,
 };
 
-app.get('/user/login', async (req, res) => {
-	
+const db = await mysql.createPool({
+	host: process.env.DB_HOST,
+	user: process.env.DB_USER,
+	password: process.env.DB_PASSWORD,
+	database: process.env.DB_NAME,
 });
 
-app.get('/user/signup', async (req, res) => {
-	
+
+const verifyToken = (req, res, next) => {
+    const token = req.cookies.user_token;
+
+    if (!token) {
+        return res.status(401).json({ error: "Unauthorized: No token provided" });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.user = decoded;
+        next();
+    } catch (error) {
+        return res.status(401).json({ error: "Unauthorized: Invalid token" });
+    }
+};
+
+
+app.post('/user/signup', async (req, res) => {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+        return res.status(400).json({ error: "All fields are required" });
+    }
+
+    try {
+        // Check if user exists
+        const [existingUser] = await db.query('SELECT * FROM user WHERE email = ?', [email]);
+        if (existingUser.length > 0) {
+            return res.status(400).json({ error: "User already exists" });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Insert user into DB
+        const [result] = await db.query(
+            'INSERT INTO user (name, email, password) VALUES (?, ?, ?)',
+            [name, email, hashedPassword]
+        );
+
+        if (result.affectedRows === 1) {
+            res.json({ success: true, message: "User registered successfully" });
+        } else {
+            res.status(500).json({ error: "Registration failed" });
+        }
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
+app.post('/user/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ error: "All fields are required" });
+    }
+
+    try {
+        // Check if user exists
+        const [users] = await db.query('SELECT * FROM user WHERE email = ?', [email]);
+
+        if (users.length === 0) {
+            return res.status(401).json({ error: "Invalid email or password" });
+        }
+
+        const user = users[0];
+
+        // Verify password
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            return res.status(401).json({ error: "Invalid email or password" });
+        }
+
+        // Generate JWT Token
+        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1h' });
+
+        // Set token in HTTP-only cookie
+        res.cookie('user_token', token, { httpOnly: true, secure: false });
+
+        res.json({ success: true, message: "Login successful", token });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+app.get('/user/profile', verifyToken, async (req, res) => {
+    const [users] = await db.query('SELECT user_id, name, email FROM user WHERE user_id = ?', [req.user.userId]);
+
+    if (users.length === 0) {
+        return res.status(401).json({ error: "User not found" });
+    }
+
+    res.json(users[0]);
+});
+
+app.post('/user/logout', (req, res) => {
+    res.clearCookie('user_token');
+    res.json({ success: true, message: "Logged out successfully" });
 });
 
 app.get('/park/list/active', async (req, res) => {
