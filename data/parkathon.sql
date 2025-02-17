@@ -1,6 +1,4 @@
 CREATE DATABASE IF NOT EXISTS `parkathon` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASSWORD}';
-GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'%';
 USE `parkathon`;
 
 -- Drop existing tables
@@ -23,7 +21,7 @@ CREATE TABLE `destination` (
   `destination_id` INT(11) NOT NULL AUTO_INCREMENT,
   `user_id` INT(11) NOT NULL,
   `lat` DECIMAL(10,7) NOT NULL,
-  `long` DECIMAL(10,7) NOT NULL,
+  `lon` DECIMAL(10,7) NOT NULL,
   `visited` INT(11) NOT NULL DEFAULT 1,
   PRIMARY KEY (`destination_id`),
   CONSTRAINT `fk_destination_user` FOREIGN KEY (`user_id`) 
@@ -35,7 +33,7 @@ CREATE TABLE `parking` (
   `parking_id` INT(11) NOT NULL AUTO_INCREMENT,
   `user_id` INT(11) NOT NULL,
   `lat` DECIMAL(10,7) NOT NULL,
-  `long` DECIMAL(10,7) NOT NULL,
+  `lon` DECIMAL(10,7) NOT NULL,
   `start_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `end_time` TIMESTAMP NULL DEFAULT NULL,
   `start_weather` TEXT DEFAULT NULL,
@@ -44,3 +42,5 @@ CREATE TABLE `parking` (
   CONSTRAINT `fk_parking_user` FOREIGN KEY (`user_id`) 
   REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `user` (`name`, `email`, `password`) VALUES ('demo', 'demo@example.com', 'demo');
