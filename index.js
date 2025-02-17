@@ -160,4 +160,68 @@ app.get('/park/find', async (req, res) => {
 	}
 });
 
+app.get('/park/simulate', async (req, res) => {
+	let {
+		q_lat,
+		q_lon,
+		rad,
+	} = req.query;
+	
+	if (!q_lat || !q_lon) {
+		return res.status(400).json({ error: "Latitude and longitude are required" });
+	}
+	
+	rad = rad || 100; // By default the radius is 100m
+	
+	const RandomWithinRadius = (in_lat, in_lon, in_rad) => {
+		const R_lat = (in_rad / 111320); // 1 degree ≈ 111.32 km
+		const R_lon = (in_rad / (111320 * Math.cos(in_lat * (Math.PI / 180))));
+		return {
+			lat: in_lat + (Math.random() - 0.5) * R_lat * 2,
+			lon: in_lon + (Math.random() - 0.5) * R_lon * 2,
+		};
+	};
+	
+	try {
+		const conn = await mysql.createConnection(config);
+		const data = await parking.OpenStreetMapFetchRoadsAt(q_lat, q_lon, rad);
+		const spot = parking.GeographicDataToParkingSpaces(data);
+		
+		const fake = [];
+		const user = 1;
+		
+		/**
+		 * Some people might end up parking on the sea... that shouldn't really be a problem though!
+		 */
+		for (let i = 0; i < spot.length * 0.9; i++) {
+			const {
+				lat,
+				lon
+			} = RandomWithinRadius(q_lat, q_lon, rad);
+			const [result] = await conn.execute(
+				'INSERT INTO parking (user_id, lat, lon) VALUES (?, ?, ?)',
+				[user, lat, lon]
+			);
+			fake.push(result.insertId);
+		}
+		
+		/** Less than 10% of the occupied parking spots will be released! */
+		const free = Math.floor(fake.length * Math.random() * 0.1);
+		
+		for (let i = 0; i < fake.length * free; i++) {
+			const id = fake[Math.floor(Math.random() * fake.length)];
+			const [result] = await conn.execute(
+				'UPDATE parking SET end_time = NOW() WHERE parking_id = ? AND user_id = ? AND end_time IS NULL',
+				[id, user]
+			);
+			console.log(result);
+		}
+		
+		await conn.end();
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ error: "Failed to simulate parking near location" });
+	}
+});
+
 app.listen(prt, () => console.log(`Backend running on port ${prt}`));
