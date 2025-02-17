@@ -52,14 +52,14 @@ app.get('/park/find', async (req, res) => {
 		const [rows] = await conn.query('SELECT * FROM parking WHERE start_time <= NOW() AND end_time IS NULL;');
 		rows.forEach((entry) => {
 			/** Remove the nearest parking spot in a radius of 12m (the distance of two cars). */
-			tree.RemoveNearest(GeographicToEuclidean({
+			tree.RemoveNearest(parking.GeographicToEuclidean({
 				lat: entry.lat,
 				lon: entry.lon,
 			}), 12);
 		});
 		await conn.end();
 		
-		return res.json(tree.Query(GeographicToEuclidean({
+		return res.json(tree.Query(parking.GeographicToEuclidean({
 				lat: lat,
 				lon: lon,
 		}), rad));
