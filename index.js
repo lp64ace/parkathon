@@ -23,6 +23,54 @@ app.get('/user/signup', async (req, res) => {
 	
 });
 
+app.get('/park/list/active', async (req, res) => {
+	let {
+		user,
+	} = req.query;
+	
+	if (!lat || !lon) {
+		return res.status(400).json({ error: "Latitude and longitude are required" });
+	}
+	if (!user /* or user not in database */) {
+		return res.status(400).json({ error: "Invalid user id provided" });
+	}
+	
+	try {
+		const conn = await mysql.createConnection(config);
+		const [rows] = await conn.query(`SELECT * FROM parking WHERE user_id = ${user} AND end_time IS NULL;`);
+		await conn.end();
+		
+		return res.json(rows);
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ error: "Failed to register parking spot occupation" });
+	}
+});
+
+app.get('/park/list/all', async (req, res) => {
+	let {
+		user,
+	} = req.query;
+	
+	if (!lat || !lon) {
+		return res.status(400).json({ error: "Latitude and longitude are required" });
+	}
+	if (!user /* or user not in database */) {
+		return res.status(400).json({ error: "Invalid user id provided" });
+	}
+	
+	try {
+		const conn = await mysql.createConnection(config);
+		const [rows] = await conn.query(`SELECT * FROM parking WHERE user_id = ${user};`);
+		await conn.end();
+		
+		return res.json(rows);
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ error: "Failed to register parking spot occupation" });
+	}
+});
+
 app.get('/park/occupy', async (req, res) => {
 	let {
 		user,
@@ -44,9 +92,7 @@ app.get('/park/occupy', async (req, res) => {
 		
 		const [results] = await conn.execute(q, v);
 		
-		res.json({
-			id: results,
-		});
+		res.json(results);
 		
 		await conn.end();
 	} catch (error) {
@@ -56,6 +102,32 @@ app.get('/park/occupy', async (req, res) => {
 });
 
 app.get('/park/vacay', async (req, res) => {
+	let {
+		parking,
+		user,
+	} = req.query;
+	
+	if (!parking /* or parking not in database */) {
+		return res.status(400).json({ error: "Invalid parking id provided" });
+	}
+	if (!user /* or user not in database */) {
+		return res.status(400).json({ error: "Invalid user id provided" });
+	}
+	
+	try {
+		const conn = await mysql.createConnection(config);
+		const q = 'UPDATE parking SET end_time = NOW() WHERE parking_id = ? AND user_id = ? AND end_time IS NULL';
+        const v = [parking, user];
+		
+		const [results] = await conn.execute(q, v);
+		
+		res.json(results);
+		
+		await conn.end();
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ error: "Failed to register parking spot occupation" });
+	}
 });
 
 app.get('/park/find', async (req, res) => {
