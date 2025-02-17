@@ -38,7 +38,8 @@ CREATE TABLE `parking` (
   `lon` DECIMAL(10,7) NOT NULL,
   `start_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   `end_time` TIMESTAMP NULL DEFAULT NULL,
-  `weather` ENUM('Sunny', 'Rainy', 'Cloudy', 'Snowy', 'Foggy') DEFAULT NULL,
+  `start_weather` TEXT DEFAULT NULL,
+  `end_weather` TEXT DEFAULT NULL,
   PRIMARY KEY (`parking_id`),
   CONSTRAINT `fk_parking_user` FOREIGN KEY (`user_id`) 
   REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
