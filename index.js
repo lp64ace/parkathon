@@ -207,7 +207,7 @@ app.get('/park/simulate', async (req, res) => {
 		
 		for (let i = 0; i < fake.length * free; i++) {
 			const id = fake[Math.floor(Math.random() * fake.length)];
-			await connection.execute(
+			await conn.execute(
 				'UPDATE parking SET end_time = NOW() WHERE parking_id = ? AND user_id = ? AND end_time IS NULL',
 				[id, user]
 			);
