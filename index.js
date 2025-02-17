@@ -28,9 +28,6 @@ app.get('/park/list/active', async (req, res) => {
 		user,
 	} = req.query;
 	
-	if (!lat || !lon) {
-		return res.status(400).json({ error: "Latitude and longitude are required" });
-	}
 	if (!user /* or user not in database */) {
 		return res.status(400).json({ error: "Invalid user id provided" });
 	}
@@ -52,9 +49,6 @@ app.get('/park/list/all', async (req, res) => {
 		user,
 	} = req.query;
 	
-	if (!lat || !lon) {
-		return res.status(400).json({ error: "Latitude and longitude are required" });
-	}
 	if (!user /* or user not in database */) {
 		return res.status(400).json({ error: "Invalid user id provided" });
 	}
