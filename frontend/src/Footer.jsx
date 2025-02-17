@@ -1,9 +1,9 @@
 import { CarFront, CircleParking, ArrowDown, X, Search } from "lucide-react";
-import { sendLocation } from "./api/sendLocation";
+import { occupyPark } from "./api/occupyPark";
 import { getParkingLocations } from "./api/getParkingLocations";
 import { useState, useEffect } from "react";
 
-function Footer({ setCurrentLocation, userId, setCameraLocation, setMarker }) {
+function Footer({ setCurrentLocation, userId, setCameraLocation, setMarker, setParkingLocations }) {
     const [driveOpen, setDriveOpen] = useState(false);
     const [destinationInput, setDestinationInput] = useState("");
 
@@ -17,7 +17,7 @@ function Footer({ setCurrentLocation, userId, setCameraLocation, setMarker }) {
                     };
                     setCurrentLocation(location);
                     setMarker('parking');
-                    sendLocation(userId, location); // Send location to backend
+                    occupyPark(userId, location.lat, location.lng); // Send location to backend
                     console.log(location);
                 },
                 (error) => {
@@ -56,7 +56,17 @@ function Footer({ setCurrentLocation, userId, setCameraLocation, setMarker }) {
                 };
                 console.log("Found location:", location);
                 setCameraLocation(location);
-                getParkingLocations(userId, location)
+                setParkingLocations(getParkingLocations(location.lat, location.lng, 50));
+
+                // Mock data
+                // setParkingLocations([
+                //     { lat: location.lat + 0.001, lng: location.lng - 0.001 },
+                //     { lat: location.lat - 0.001, lng: location.lng + 0.002 },
+                //     { lat: location.lat + 0.002, lng: location.lng + 0.001 },
+                //     { lat: location.lat - 0.002, lng: location.lng - 0.002 },
+                //     { lat: location.lat + 0.001, lng: location.lng + 0.002 }
+                // ]);
+
                 setMarker('destination');
             } else {
                 console.error("Geocoding failed:", status);

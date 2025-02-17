@@ -4,9 +4,13 @@ import parking from './lib/parking.js';
 import express from "express";
 import fetch from "node-fetch";
 import mysql from 'mysql2/promise';
+import cors from 'cors';
 
 const prt = 9000;
 const app = express();
+
+app.use(cors());
+app.use(express.json());
 
 const config = {
 	host: process.env.DB_HOST,
@@ -15,15 +19,15 @@ const config = {
 	database: process.env.DB_NAME,
 };
 
-app.get('/user/login', async (req, res) => {
+app.post('/user/login', async (req, res) => {
 	
 });
 
-app.get('/user/signup', async (req, res) => {
+app.post('/user/signup', async (req, res) => {
 	
 });
 
-app.get('/park/list/active', async (req, res) => {
+app.post('/park/list/active', async (req, res) => {
 	let {
 		user,
 	} = req.query;
@@ -43,7 +47,7 @@ app.get('/park/list/active', async (req, res) => {
 	}
 });
 
-app.get('/park/list/all', async (req, res) => {
+app.post('/park/list/all', async (req, res) => {
 	let {
 		user,
 	} = req.query;
@@ -63,7 +67,7 @@ app.get('/park/list/all', async (req, res) => {
 	}
 });
 
-app.get('/park/occupy', async (req, res) => {
+app.post('/park/occupy', async (req, res) => {
 	let {
 		user,
 		lat,
@@ -92,7 +96,7 @@ app.get('/park/occupy', async (req, res) => {
 	}
 });
 
-app.get('/park/vacay', async (req, res) => {
+app.post('/park/vacay', async (req, res) => {
 	let {
 		parking,
 		user,

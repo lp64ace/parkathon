@@ -9,6 +9,7 @@ function App() {
     const [cameraLocation, setCameraLocation] = useState(null);
     const [marker, setMarker] = useState(null);
     const [userId, setUserId] = useState(null);
+    const [parkingLocations, setParkingLocations] = useState([]);
 
     useEffect(() => {
         // Check if user ID exists in local storage
@@ -30,12 +31,14 @@ function App() {
                 currentLocation={currentLocation}
                 cameraLocation={cameraLocation}
                 marker={marker}
+                parkingLocations={parkingLocations}
             />
             <Footer
                 setCurrentLocation={setCurrentLocation}
                 userId={userId}
                 setCameraLocation={setCameraLocation}
                 setMarker={setMarker}
+                setParkingLocations={setParkingLocations}
             />
         </main>
     );
