@@ -1,6 +1,7 @@
 import { CarFront, CircleParking, ArrowDown, X, Search } from "lucide-react";
 import { occupyPark } from "./api/occupyPark";
 import { getParkingLocations } from "./api/getParkingLocations";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useState, useEffect } from "react";
 
 function Footer({
@@ -12,29 +13,37 @@ function Footer({
 }) {
     const [driveOpen, setDriveOpen] = useState(false);
     const [destinationInput, setDestinationInput] = useState("");
+    const [parkIsLoading, setParkIsLoading] = useState(false);
 
-    const handleParkClick = () => {
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const location = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    };
-                    setCurrentLocation(location);
-                    setMarker("parking");
-                    occupyPark(userId, location.lat, location.lng); // Send location to backend
-                    console.log(location);
-                },
-                (error) => {
-                    console.error("Error getting location:", error);
-                    alert(
-                        "Unable to get your location. Please enable location services.",
-                    );
-                },
-            );
-        } else {
-            alert("Geolocation is not supported by your browser");
+    const handleParkButton = () => {
+        try {
+            setParkIsLoading(true);
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const location = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+                        setCurrentLocation(location);
+                        setMarker("parking");
+                        occupyPark(userId, location.lat, location.lng); // Send location to backend
+                        setParkIsLoading(false);
+                        console.log(location);
+                    },
+                    (error) => {
+                        console.error("Error getting location:", error);
+                        alert(
+                            "Unable to get your location. Please enable location services.",
+                        );
+                    },
+                );
+            } else {
+                alert("Geolocation is not supported by your browser");
+            }
+        } catch {
+            setParkIsLoading(false);
+            console.error("Error getting location");
         }
     };
 
@@ -46,24 +55,35 @@ function Footer({
         setDriveOpen(false);
     };
 
-    const handleSearchButton = () => {
+    const handleSearchButton = async () => {
         if (destinationInput === "") {
             alert("Please enter a destination");
             return;
         }
 
-        const geocoder = new window.google.maps.Geocoder();
+        try {
+            const response = await fetch(
+                `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+                    destinationInput,
+                )}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`,
+            );
 
-        geocoder.geocode({ address: destinationInput }, async (results, status) => {
-            if (status === "OK") {
+            const data = await response.json();
+
+            if (data.status === "OK") {
                 const location = {
-                    lat: results[0].geometry.location.lat(),
-                    lng: results[0].geometry.location.lng(),
+                    lat: data.results[0].geometry.location.lat,
+                    lng: data.results[0].geometry.location.lng,
                 };
                 console.log("Found location:", location);
                 setCameraLocation(location);
+
                 try {
-                    const parkingLocations = await getParkingLocations(location.lat, location.lng, 50);
+                    const parkingLocations = await getParkingLocations(
+                        location.lat,
+                        location.lng,
+                        50,
+                    );
                     setParkingLocations(parkingLocations);
                 } catch (error) {
                     console.error("Error getting parking locations:", error);
@@ -80,10 +100,13 @@ function Footer({
 
                 setMarker("destination");
             } else {
-                console.error("Geocoding failed:", status);
+                console.error("Geocoding failed:", data.status);
                 alert("Could not find this location");
             }
-        });
+        } catch (error) {
+            console.error("Error fetching location:", error);
+            alert("Error fetching location data");
+        }
     };
 
     return (
@@ -92,15 +115,20 @@ function Footer({
                 <div className="flex h-6 w-24 translate-y-[2px] items-center justify-center rounded-t-2xl border-2 border-b-0 border-slate-700 bg-white">
                     <ArrowDown size={20} color="#2e2e2e" />
                 </div>
-                <div className="flex h-26 w-full justify-between md:border-2 border-t-2 md:border-b-0 border-slate-700 bg-white p-4 md:rounded-t-xl">
+                <div className="flex h-26 w-full justify-between border-t-2 border-slate-700 bg-white p-4 md:rounded-t-xl md:border-2 md:border-b-0">
                     <div className="relative">
                         {/* Drive Button */}
                         <div
                             className={`absolute transition-all duration-300 ${driveOpen ? "pointer-events-none -translate-x-4 opacity-0" : "pointer-events-auto translate-x-0 opacity-100"}`}
                         >
                             <button
-                                className="flex items-center gap-2 rounded-xl border-2 border-slate-600 p-4 transition-colors hover:cursor-pointer hover:bg-sky-100"
+                                className={`flex items-center gap-2 rounded-xl border-2 border-slate-600 p-4 transition-colors ${
+                                    parkIsLoading
+                                        ? "cursor-not-allowed opacity-50"
+                                        : "hover:cursor-pointer hover:bg-sky-100"
+                                }`}
                                 onClick={handleDriveClick}
+                                disabled={parkIsLoading}
                             >
                                 <CarFront size={32} color="#2e2e2e" />
                                 <h3 className="text-2xl font-medium text-gray-800">
@@ -134,6 +162,11 @@ function Footer({
                                                     e.target.value,
                                                 )
                                             }
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    handleSearchButton();
+                                                }
+                                            }}
                                         />
                                         <button
                                             className="rounded-md p-2 transition-colors hover:cursor-pointer hover:bg-slate-100"
@@ -150,15 +183,24 @@ function Footer({
                     <div
                         className={`transition-all duration-300 ${driveOpen ? "pointer-events-none invisible translate-x-4 opacity-0" : "translate-x-0 opacity-100"}`}
                     >
-                        <button
-                            className="flex items-center gap-2 rounded-xl border-2 border-slate-600 p-4 transition-colors hover:cursor-pointer hover:bg-red-100"
-                            onClick={handleParkClick}
-                        >
-                            <CircleParking size={32} color="#2e2e2e" />
-                            <h3 className="text-2xl font-medium text-gray-800">
-                                Park
-                            </h3>
-                        </button>
+                        {parkIsLoading ? (
+                            <div className="flex items-center gap-2 rounded-xl border-2 border-slate-600 p-4">
+                                <CircularProgress size={24} />
+                                <h3 className="text-xl text-gray-800">
+                                    Parking
+                                </h3>
+                            </div>
+                        ) : (
+                            <button
+                                className="flex items-center gap-2 rounded-xl border-2 border-slate-600 p-4 transition-colors hover:cursor-pointer hover:bg-red-100"
+                                onClick={handleParkButton}
+                            >
+                                <CircleParking size={32} color="#2e2e2e" />
+                                <h3 className="text-2xl font-medium text-gray-800">
+                                    Park
+                                </h3>
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
