@@ -71,3 +71,17 @@ As far as the backend is concerned the following queries are available on port 9
 - `lat`: (number) The latiture of the location.
 - `lon`: (number) The longtitute of the location.
 - `rad`: (number) The radius in meters we want to search.
+
+### POST /park/demo/clean
+
+**Purpose**: This endpoint is used to remove all parking entries from user 'demo'
+
+### POST /park/demo/simulate
+
+**Purpose**: This endpoint is used to simulate parking entries using the user 'demo' near a location
+
+**Query Parameters**:
+
+- `lat`: (number) The latiture of the location.
+- `lon`: (number) The longtitute of the location.
+- `rad`: (number) The radius in meters we want to occupy.

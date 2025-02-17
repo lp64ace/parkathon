@@ -1,6 +1,8 @@
 import kDTree from './lib/kdtree.js';
 import parking from './lib/parking.js';
 
+// import 'dotenv/config'; // Automatically loads .env
+
 import express from "express";
 import fetch from "node-fetch";
 import mysql from 'mysql2/promise';
@@ -161,6 +163,93 @@ app.get('/park/find', async (req, res) => {
 		}), rad));
 	} catch (error) {
 		return res.status(500).json({ error: "Failed to fetch parking information near location" });
+	}
+});
+
+app.get('/park/demo/clean', async (req, res) => {
+	const user = 1;
+	
+	try {
+		const conn = await mysql.createConnection(config);
+		const [result] = await conn.execute(
+			'DELETE FROM parking WHERE user_id = ?',
+			[user]
+		);
+		await conn.end();
+		
+		return res.json(result);
+	} catch (error) {
+		return res.status(500).json({ error: "Failed to clean demo parking locations" });
+	}
+});
+
+app.get('/park/demo/simulate', async (req, res) => {
+	let {
+		q_lat,
+		q_lon,
+		rad,
+	} = req.query;
+	
+	if (!q_lat || !q_lon) {
+		return res.status(400).json({ error: "Latitude and longitude are required" });
+	}
+	
+	rad = rad || 100; // By default the radius is 100m
+	
+	const RandomWithinRadius = (in_lat, in_lon, in_rad) => {
+		const R_lat = (in_rad / 111320); // 1 degree ≈ 111.32 km
+		const R_lon = (in_rad / (111320 * Math.cos(in_lat * (Math.PI / 180))));
+		return {
+			lat: in_lat + (Math.random() - 0.5) * R_lat * 2,
+			lon: in_lon + (Math.random() - 0.5) * R_lon * 2,
+		};
+	};
+	
+	try {
+		const conn = await mysql.createConnection(config);
+		const data = await parking.OpenStreetMapFetchRoadsAt(q_lat, q_lon, rad);
+		const spot = parking.GeographicDataToParkingSpaces(data);
+		
+		const fake = [];
+		const user = 1;
+		
+		/**
+		 * Some people might end up parking on the sea... that shouldn't really be a problem though!
+		 */
+		const mark = Math.floor(spot.length * (0.9 + Math.random() * 0.1));
+		
+		for (let i = 0; i < mark; i++) {
+			const {
+				lat,
+				lon
+			} = RandomWithinRadius(parseFloat(q_lat), parseFloat(q_lon), rad);
+			const [result] = await conn.execute(
+				'INSERT INTO parking (user_id, lat, lon) VALUES (?, ?, ?)',
+				[user, lat, lon]
+			);
+			fake.push(result.insertId);
+		}
+		
+		/** Less than 10% of the occupied parking spots will be released! */
+		const free = Math.floor(fake.length * Math.random() * 0.1);
+		
+		for (let i = 0; i < free; i++) {
+			const id = fake[Math.floor(Math.random() * fake.length)];
+			const [result] = await conn.execute(
+				'UPDATE parking SET end_time = NOW() WHERE parking_id = ? AND user_id = ? AND end_time IS NULL',
+				[id, user]
+			);
+		}
+		
+		await conn.end();
+		
+		return res.json({
+			total: spot.length,
+			count: mark,
+			freed: free
+		});
+	} catch (error) {
+		return res.status(500).json({ error: "Failed to simulate parking near location" });
 	}
 });
 
