@@ -39,7 +39,6 @@ app.get('/park/list/active', async (req, res) => {
 		
 		return res.json(rows);
 	} catch (error) {
-		console.log(error);
 		return res.status(500).json({ error: "Failed to register parking spot occupation" });
 	}
 });
@@ -60,7 +59,6 @@ app.get('/park/list/all', async (req, res) => {
 		
 		return res.json(rows);
 	} catch (error) {
-		console.log(error);
 		return res.status(500).json({ error: "Failed to register parking spot occupation" });
 	}
 });
@@ -90,7 +88,6 @@ app.get('/park/occupy', async (req, res) => {
 		
 		await conn.end();
 	} catch (error) {
-		console.log(error);
 		return res.status(500).json({ error: "Failed to register parking spot occupation" });
 	}
 });
@@ -119,7 +116,6 @@ app.get('/park/vacay', async (req, res) => {
 		
 		await conn.end();
 	} catch (error) {
-		console.log(error);
 		return res.status(500).json({ error: "Failed to register parking spot occupation" });
 	}
 });
@@ -160,7 +156,6 @@ app.get('/park/find', async (req, res) => {
 				lon: lon,
 		}), rad));
 	} catch (error) {
-		console.log(error);
 		return res.status(500).json({ error: "Failed to fetch parking information near location" });
 	}
 });
