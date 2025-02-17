@@ -24,11 +24,38 @@ app.get('/user/signup', async (req, res) => {
 });
 
 app.get('/park/occupy', async (req, res) => {
+	let {
+		user,
+		lat,
+		lon,
+	} = req.query;
 	
+	if (!lat || !lon) {
+		return res.status(400).json({ error: "Latitude and longitude are required" });
+	}
+	if (!user /* or user not in database */) {
+		return res.status(400).json({ error: "Invalid user id provided" });
+	}
+	
+	try {
+		const conn = await mysql.createConnection(config);
+		const q = 'INSERT INTO parking (user_id, lat, lon) VALUES (?, ?, ?)';
+        const v = [user, lat, lon];
+		
+		const [results] = await conn.execute(q, v);
+		
+		res.json({
+			id: results,
+		});
+		
+		await conn.end();
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ error: "Failed to register parking spot occupation" });
+	}
 });
 
 app.get('/park/vacay', async (req, res) => {
-	
 });
 
 app.get('/park/find', async (req, res) => {
