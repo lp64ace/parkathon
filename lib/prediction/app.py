@@ -17,7 +17,7 @@ def predict():
 
     tree = kDTree(dimensions=2)
     all_spots = fetch_all()
-    all_spots_coords = all_spots[['long', 'lat']].values
+    all_spots_coords = all_spots[['lon', 'lat']].values
     tree.InsertPoints(all_spots_coords)
     lon, lat = map(float, destination.split(','))
     nearest_spots = tree.Query([lon, lat], k)

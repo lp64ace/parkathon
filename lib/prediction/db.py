@@ -14,9 +14,9 @@ def connect_to_db():
 def fetch(lon, lat):
     conn = connect_to_db()
     query = """
-    SELECT parking_id, lat, long, start_time, end_time, start_weather, end_weather
+    SELECT parking_id, lat, lon, start_time, end_time, start_weather, end_weather
     FROM parking
-    WHERE long = %s AND lat = %s
+    WHERE lon = %s AND lat = %s
     """
     df = pd.read_sql_query(query, conn, params=(lon,lat,))
     conn.close()
@@ -26,7 +26,7 @@ def fetch(lon, lat):
 def fetch_all():
     conn = connect_to_db()
     query = """
-    SELECT DISTINCT lat, long
+    SELECT DISTINCT lat, lon
     FROM parking
     """
     df = pd.read_sql_query(query, conn)
