@@ -17,7 +17,7 @@ export const login = async (email, password) => {
         console.log(response.data);
         return response.data;
     } catch (error) {
-        console.error("Error during login:", error.response.data.error);
+        console.error("Error during login:", error);
         throw error;
     }
 };
@@ -28,7 +28,7 @@ export const getProfile = async () => {
         console.log(response.data);
         return response.data;
     } catch (error) {
-        console.error("Error fetching profile:", error.response.data.error);
+        console.error("Error fetching profile:", error);
         throw error;
     }
 };
@@ -39,7 +39,7 @@ export const logout = async () => {
         console.log(response.data);
         return response.data;
     } catch (error) {
-        console.error("Error during logout:", error.response.data.error);
+        console.error("Error during logout:", error);
         throw error;
     }
 };
