@@ -38,19 +38,7 @@ services:
         networks:
             - app-network
 
-    nginx:
-        build:
-            context: ./nginx
-        ports:
-            - "80:80"
-            - "443:443"
-        depends_on:
-            - backend
-            - frontend
-        networks:
-            - app-network
-
-    python-service:
+        python-service:
         build:
             context: ./src
             dockerfile: Dockerfile
@@ -70,6 +58,19 @@ services:
         depends_on:
             - parkathon-data
             - backend
+        networks:
+            - app-network
+
+    nginx:
+        build:
+            context: ./nginx
+        ports:
+            - "80:80"
+            - "443:443"
+        depends_on:
+            - backend
+            - frontend
+            - python-service
         networks:
             - app-network
 
