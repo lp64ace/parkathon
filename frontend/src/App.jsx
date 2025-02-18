@@ -12,23 +12,10 @@ function App() {
     const [userId, setUserId] = useState(null);
     const [parkingLocations, setParkingLocations] = useState([]);
 
-    useEffect(() => {
-        // Check if user ID exists in local storage
-        let storedUserId = localStorage.getItem("user_id");
-
-        // If no ID exists, create new one
-        if (!storedUserId) {
-            storedUserId = uuidv4();
-            localStorage.setItem("user_id", storedUserId);
-        }
-
-        setUserId(storedUserId);
-    }, []);
-
     return (
         <main className="relative h-screen">
             <Options />
-            <ParkingSpots />
+            <ParkingSpots userId={userId} />
             <GMap
                 currentLocation={currentLocation}
                 cameraLocation={cameraLocation}
@@ -41,6 +28,7 @@ function App() {
                 setCameraLocation={setCameraLocation}
                 setMarker={setMarker}
                 setParkingLocations={setParkingLocations}
+                setUserId={setUserId}
             />
         </main>
     );

@@ -4,3 +4,11 @@ export const formatCoordinates = (data) => {
         lng: item[3]
     }));
 };
+
+export const renameCoordinates = (data) => {
+    return data.map((item) => ({
+        ...item,
+        lng: item.lon,
+        lat: item.lat
+    }));
+}

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { getActiveParkingSpots } from "./api/getActiveParkingSpots";
 import { vacateParkingSpot } from "./api/vacateParkingSpot";
 import CircularProgress from "@mui/material/CircularProgress";
-import { formatCoordinates } from "./utils/formatCoordinates";
+import { renameCoordinates } from "./utils/formatCoordinates";
 
 function ParkingSpots({ userId }) {
     const [activeParkingSpotsOpen, setActiveParkingSpotsOpen] = useState(false);
@@ -15,7 +15,7 @@ function ParkingSpots({ userId }) {
             setIsLoading(true);
             setActiveParkingSpotsOpen(true);
             let spots = await getActiveParkingSpots(userId);
-            spots = formatCoordinates(spots);
+            spots = renameCoordinates(spots);
             setActiveParkingSpots(spots);
 
             // Mock data
