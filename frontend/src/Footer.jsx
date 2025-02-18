@@ -4,6 +4,7 @@ import { getParkingLocations } from "./api/getParkingLocations";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useState } from "react";
 import { formatCoordinates } from "./utils/formatCoordinates";
+import Dictaphone from "./Dictaphone";
 
 function Footer({
     setCurrentLocation,
@@ -56,51 +57,21 @@ function Footer({
         setDriveOpen(false);
     };
 
-    const handleSearchButton = async () => {
-        if (destinationInput === "") {
-            alert("Please enter a destination");
-            return;
-        }
-
+    const getLocationFromDestination = async (destination) => {
         try {
             const response = await fetch(
                 `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-                    destinationInput,
+                    destination,
                 )}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`,
             );
 
             const data = await response.json();
-
             if (data.status === "OK") {
                 const location = {
                     lat: data.results[0].geometry.location.lat,
                     lng: data.results[0].geometry.location.lng,
                 };
-                console.log("Found location:", location);
-                setCameraLocation(location);
-
-                try {
-                    let parkingLocations = await getParkingLocations(
-                        location.lat,
-                        location.lng,
-                        50,
-                    );
-                    parkingLocations = formatCoordinates(parkingLocations);
-                    setParkingLocations(parkingLocations);
-                } catch (error) {
-                    console.error("Error getting parking locations:", error);
-                }
-
-                // Mock data
-                // setParkingLocations([
-                //     { lat: location.lat + 0.001, lng: location.lng - 0.001 },
-                //     { lat: location.lat - 0.001, lng: location.lng + 0.002 },
-                //     { lat: location.lat + 0.002, lng: location.lng + 0.001 },
-                //     { lat: location.lat - 0.002, lng: location.lng - 0.002 },
-                //     { lat: location.lat + 0.001, lng: location.lng + 0.002 }
-                // ]);
-
-                setMarker("destination");
+                return location;
             } else {
                 console.error("Geocoding failed:", data.status);
                 alert("Could not find this location");
@@ -108,6 +79,40 @@ function Footer({
         } catch (error) {
             console.error("Error fetching location:", error);
             alert("Error fetching location data");
+        }
+    };
+
+    const handleSearchButton = async () => {
+        if (destinationInput === "") {
+            alert("Please enter a destination");
+            return;
+        }
+
+        const location = await getLocationFromDestination(destinationInput);
+        console.log("Found location:", location);
+        setCameraLocation(location);
+
+        try {
+            let parkingLocations = await getParkingLocations(
+                location.lat,
+                location.lng,
+                50,
+            );
+            parkingLocations = formatCoordinates(parkingLocations);
+            setParkingLocations(parkingLocations);
+
+            // Mock data
+            // setParkingLocations([
+            //     { lat: location.lat + 0.001, lng: location.lng - 0.001 },
+            //     { lat: location.lat - 0.001, lng: location.lng + 0.002 },
+            //     { lat: location.lat + 0.002, lng: location.lng + 0.001 },
+            //     { lat: location.lat - 0.002, lng: location.lng - 0.002 },
+            //     { lat: location.lat + 0.001, lng: location.lng + 0.002 }
+            // ]);
+
+            setMarker("destination");
+        } catch (error) {
+            console.error("Error getting parking locations:", error);
         }
     };
 
@@ -181,14 +186,26 @@ function Footer({
                             </div>
                         </div>
                     </div>
+                    <div
+                        className={`absolute left-1/2 -translate-x-1/2 transition-all duration-300 ${driveOpen ? "pointer-events-none opacity-0" : "pointer-events-auto opacity-100"}`}
+                    >
+                        <Dictaphone
+                            getLocationFromDestination={
+                                getLocationFromDestination
+                            }
+                            setCameraLocation={setCameraLocation}
+                            setParkingLocations={setParkingLocations}
+                            setMarker={setMarker}
+                        />
+                    </div>
                     {/* Park Button */}
                     <div
                         className={`transition-all duration-300 ${driveOpen ? "pointer-events-none invisible translate-x-4 opacity-0" : "translate-x-0 opacity-100"}`}
                     >
                         {parkIsLoading ? (
                             <div className="flex items-center gap-2 rounded-xl border-2 border-slate-600 p-4">
-                                <CircularProgress size={24} />
-                                <h3 className="text-xl text-gray-800">
+                                <CircularProgress size={32} />
+                                <h3 className="text-xl font-medium text-gray-800">
                                     Parking
                                 </h3>
                             </div>

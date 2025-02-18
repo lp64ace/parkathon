@@ -1,5 +1,7 @@
 import kDTree from './lib/kdtree.js';
 import parking from './lib/parking.js';
+import openAI from 'openai';
+import 'dotenv/config';
 
 // import 'dotenv/config'; // Automatically loads .env
 
@@ -20,6 +22,8 @@ const config = {
 	password: process.env.DB_PASSWORD,
 	database: process.env.DB_NAME,
 };
+
+const openai = new openAI({ apiKey: process.env.OPENAI_API_KEY});
 
 app.post('/user/login', async (req, res) => {
 	
@@ -251,6 +255,40 @@ app.get('/park/demo/simulate', async (req, res) => {
 	} catch (error) {
 		return res.status(500).json({ error: "Failed to simulate parking near location" });
 	}
+});
+
+app.get("/transcript", async (req, res) => {
+    let { text } = req.query;
+
+    if (!text) {
+        return res.status(400).json({ error: "Text query is required" });
+    }
+
+    try {
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+                {
+                    role: "system",
+                    content:
+                        "You are a location extractor. Extract only the location name from the given text. Respond with just the location name, nothing else.",
+                },
+                {
+                    role: "user",
+                    content: text,
+                },
+            ],
+            temperature: 0.2,
+            max_tokens: 50,
+        });
+
+        const location = completion.choices[0].message.content.trim();
+        return res.json({ location });
+    } catch (error) {
+        return res
+            .status(500)
+            .json({ error: "Failed to process location from text" });
+    }
 });
 
 app.listen(prt, () => console.log(`Backend running on port ${prt}`));
