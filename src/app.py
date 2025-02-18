@@ -7,6 +7,13 @@ from model import train_model, parkingChance
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/', methods=['GET'])
+def ping():
+    try:
+        return jsonify({'Pong from python'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/predict', methods=['GET'])
 def predict():
     try:
