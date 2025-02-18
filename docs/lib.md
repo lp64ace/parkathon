@@ -179,5 +179,5 @@ probability = parkingChance(model, timestamp, weather)
 
 Example Usage:
 ```js
-parkingPrediction('40.7128,-74.0060', '15-10-2023 14:00', 'Sunny 23C', 50);
+parkingPrediction('40.7128', '-74.0060', '2023-10-15T14:00:00', 'Sunny 23C', 50);
 ```
