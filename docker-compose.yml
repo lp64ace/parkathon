@@ -38,7 +38,7 @@ services:
         networks:
             - app-network
 
-        python-service:
+    python-service:
         build:
             context: ./src
             dockerfile: Dockerfile
