@@ -3,10 +3,8 @@ version: '3.8'
 services:
     frontend:
         build:
-            context: .
+            context: ./frontend
             dockerfile: Dockerfile
-            args:
-                - VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}
         ports:
             - "80:80"
         environment:
@@ -17,7 +15,7 @@ services:
 
     backend:
         build:
-            context: .
+            context: ./lib
             dockerfile: Dockerfile
         environment:
             - DB_HOST=parkathon-data
@@ -33,8 +31,13 @@ services:
 
     python-service:
         build:
-            context: .
+            context: ./src
             dockerfile: Dockerfile
+        environment:
+            - DB_HOST=parkathon-data
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
+            - DB_NAME=${DB_NAME}
         ports:
             - "9001:9001"
         depends_on:
