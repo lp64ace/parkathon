@@ -1,8 +1,10 @@
 import { CarFront, CircleParking, ArrowDown, X, Search } from "lucide-react";
 import { occupyPark } from "./api/occupyPark";
 import { getParkingLocations } from "./api/getParkingLocations";
+import { useState, useEffect } from "react";
+import SignupLogin from "./SignupLogin";
+import Cookies from "js-cookie";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useState } from "react";
 import { formatCoordinates } from "./utils/formatCoordinates";
 import Dictaphone from "./Dictaphone";
 
@@ -15,9 +17,17 @@ function Footer({
 }) {
     const [driveOpen, setDriveOpen] = useState(false);
     const [destinationInput, setDestinationInput] = useState("");
+    const [showSignupLogin, setShowSignupLogin] = useState(false);
     const [parkIsLoading, setParkIsLoading] = useState(false);
 
     const handleParkButton = () => {
+        const userToken = Cookies.get("user_token");
+
+        if (!userToken) {
+            setShowSignupLogin(true);
+            return;
+        }
+      
         try {
             setParkIsLoading(true);
             if ("geolocation" in navigator) {
@@ -118,16 +128,20 @@ function Footer({
     };
 
     return (
-        <div className="flex w-screen justify-center">
-            <div className="fixed bottom-0 z-10 flex w-screen max-w-192 flex-col items-center">
-                <div className="flex h-6 w-24 translate-y-[2px] items-center justify-center rounded-t-2xl border-2 border-b-0 border-slate-700 bg-white">
-                    <ArrowDown size={20} color="#2e2e2e" />
-                </div>
-                <div className="flex h-26 w-full justify-between border-t-2 border-slate-700 bg-white p-4 md:rounded-t-xl md:border-2 md:border-b-0">
-                    <div className="relative">
-                        {/* Drive Button */}
-                        <div
-                            className={`absolute transition-all duration-300 ${driveOpen ? "pointer-events-none -translate-x-4 opacity-0" : "pointer-events-auto translate-x-0 opacity-100"}`}
+      <div className="flex w-screen justify-center">
+        <div className="fixed bottom-0 z-10 flex w-screen max-w-192 flex-col items-center">
+            {showSignupLogin && <div className="fixed inset-0 z-50 flex items-center justify-center">
+                <SignupLogin setShowSignupLogin={setShowSignupLogin}/>
+            </div>}
+            <div className="flex h-6 w-24 translate-y-[2px] items-center justify-center rounded-t-2xl border-2 border-b-0 border-slate-700 bg-white">
+                <ArrowDown size={20} color="#2e2e2e" />
+            </div>
+            <div className="flex h-26 w-full justify-between border-t-2 border-slate-700 bg-white p-4 md:rounded-t-xl md:border-2 md:border-b-0">
+                <div className="relative">
+                    {/* Drive Button */}
+                    <div
+                        className={`absolute transition-all duration-300 ${driveOpen ? "pointer-events-none -translate-x-4 opacity-0" : "pointer-events-auto translate-x-0 opacity-100"}`}
+                    >
                         >
                             <button
                                 className={`flex items-center gap-2 rounded-xl border-2 border-slate-600 p-4 transition-colors ${
