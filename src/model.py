@@ -23,20 +23,28 @@ def train_model(spot_lon, spot_lat):
     return model
 
 def parkingChance(model, timestamp, weather):
+    datetime_obj = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S')
     
-    datetime_obj = datetime.strptime(timestamp, '%d-%m-%Y %H:%M')
-    conditions, temperature = weather.split()
-    conditions_encoded = model.classes_.tolist().index(conditions) if conditions in model.classes_ else -1
-    if temperature.endswith('F'):
-        # Convert to Celsius
-        temperature = (int(temperature[:-1])-32)*5.0 / 9.0
+    weather_parts = weather.split()
+    if len(weather_parts) >= 2:
+        conditions = weather_parts[0]
+        temperature = weather_parts[1].strip('C')
     else:
-        # Remove 'C'
-        temperature = int(temperature[:-1])
+        return jsonify({'error': 'Invalid weather format'}), 400
+    
+    try:
+        conditions_encoded = model.classes_.tolist().index(conditions)
+    except ValueError:
+        conditions_encoded = -1  # If condition is unseen, assign -1
+    
+    try:
+        temperature = float(temperature)
+    except ValueError:
+        return jsonify({'error': 'Invalid temperature format'}), 400
 
     input_df = pd.DataFrame([{
         'isWeekend':    datetime_obj.weekday() >= 5,
-        'isHoliday':    datetime_obj in holidays.GR(),
+        'isHoliday':    datetime_obj.date() in holidays.GR(),
         'season':       datetime_obj.month % 12 // 3 + 1,
         'year':         datetime_obj.year,
         'day':          datetime_obj.weekday(),
