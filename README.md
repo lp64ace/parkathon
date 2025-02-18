@@ -12,7 +12,7 @@ Parkathon is a web application designed to help users find parking spots efficie
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Apendix
-For more details please refer to `docs/parkathon.pdf`
+For more details please refer to `docs/`
 
 ## Deploy
 
@@ -71,3 +71,14 @@ As far as the backend is concerned the following queries are available on port 9
 - `lat`: (number) The latiture of the location.
 - `lon`: (number) The longtitute of the location.
 - `rad`: (number) The radius in meters we want to search.
+
+### POST /predict
+
+**Purpose**: This endpoint is used to predict the availability of parking spots based on the user's coordinates, timestamp, weather, and search radius.
+
+**Query Parameters**:
+
+- `coords`: (string) The coordinates (latitude and longtitude).
+- `timestamp`: (string) The timestamp of the request in the format "dd-mm-yyyy hh:mm".
+- `weather`: (string) The weather conditions at the time of the request in the format "Condition Temperature".
+- `radius`: (number) The radius in meters to search for available parking spots (default is 50 meters).

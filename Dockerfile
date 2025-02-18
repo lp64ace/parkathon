@@ -30,7 +30,7 @@ RUN apk add --no-cache gcc g++ musl-dev python3-dev libffi-dev libc-dev
 
 # Copy Python requirements and source code
 COPY lib/prediction/requirements.txt . 
-COPY lib/prediction/ . 
+COPY lib/prediction/ .
 
 # =============================
 # 4. Final Stage - Merge Everything
