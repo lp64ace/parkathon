@@ -1,15 +1,20 @@
 import kDTree from './lib/kdtree.js';
 import parking from './lib/parking.js';
+import openAI from 'openai';
+import 'dotenv/config';
 
 // import 'dotenv/config'; // Automatically loads .env
 
 import express from "express";
 import fetch from "node-fetch";
 import mysql from 'mysql2/promise';
+import cors from 'cors';
 
 const prt = 9000;
 const app = express();
 
+app.use(cors());
+app.use(express.json());
 
 const config = {
 	host: process.env.DB_HOST,
@@ -18,11 +23,13 @@ const config = {
 	database: process.env.DB_NAME,
 };
 
-app.get('/user/login', async (req, res) => {
+const openai = new openAI({ apiKey: process.env.OPENAI_API_KEY});
+
+app.post('/user/login', async (req, res) => {
 	
 });
 
-app.get('/user/signup', async (req, res) => {
+app.post('/user/signup', async (req, res) => {
 	
 });
 
@@ -46,7 +53,7 @@ app.get('/park/list/active', async (req, res) => {
 	}
 });
 
-app.get('/park/list/all', async (req, res) => {
+app.post('/park/list/all', async (req, res) => {
 	let {
 		user,
 	} = req.query;
@@ -66,7 +73,7 @@ app.get('/park/list/all', async (req, res) => {
 	}
 });
 
-app.get('/park/occupy', async (req, res) => {
+app.post('/park/occupy', async (req, res) => {
 	let {
 		user,
 		lat,
@@ -95,7 +102,7 @@ app.get('/park/occupy', async (req, res) => {
 	}
 });
 
-app.get('/park/vacay', async (req, res) => {
+app.post('/park/vacay', async (req, res) => {
 	let {
 		parking,
 		user,
@@ -248,6 +255,40 @@ app.get('/park/demo/simulate', async (req, res) => {
 	} catch (error) {
 		return res.status(500).json({ error: "Failed to simulate parking near location" });
 	}
+});
+
+app.get("/transcript", async (req, res) => {
+    let { text } = req.query;
+
+    if (!text) {
+        return res.status(400).json({ error: "Text query is required" });
+    }
+
+    try {
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+                {
+                    role: "system",
+                    content:
+                        "You are a location extractor. Extract only the location name from the given text. Respond with just the location name, nothing else. If the user specifies the road or any other information that correlates with the location, add that as well. The final result should be a location on the map.",
+                },
+                {
+                    role: "user",
+                    content: text,
+                },
+            ],
+            temperature: 0.2,
+            max_tokens: 70,
+        });
+
+        const location = completion.choices[0].message.content.trim();
+        return res.json({ location });
+    } catch (error) {
+        return res
+            .status(500)
+            .json({ error: "Failed to process location from text" });
+    }
 });
 
 app.listen(prt, () => console.log(`Backend running on port ${prt}`));
