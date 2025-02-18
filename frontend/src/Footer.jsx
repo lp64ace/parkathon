@@ -138,69 +138,67 @@ function Footer({
             </div>
             <div className="flex h-26 w-full justify-between border-t-2 border-slate-700 bg-white p-4 md:rounded-t-xl md:border-2 md:border-b-0">
                 <div className="relative">
-                    {/* Drive Button */}
-                    <div
-                        className={`absolute transition-all duration-300 ${driveOpen ? "pointer-events-none -translate-x-4 opacity-0" : "pointer-events-auto translate-x-0 opacity-100"}`}
-                    >
-                        >
-                            <button
-                                className={`flex items-center gap-2 rounded-xl border-2 border-slate-600 p-4 transition-colors ${
-                                    parkIsLoading
-                                        ? "cursor-not-allowed opacity-50"
-                                        : "hover:cursor-pointer hover:bg-sky-100"
-                                }`}
-                                onClick={handleDriveClick}
-                                disabled={parkIsLoading}
-                            >
-                                <CarFront size={32} color="#2e2e2e" />
-                                <h3 className="text-2xl font-medium text-gray-800">
-                                    Drive
-                                </h3>
-                            </button>
-                        </div>
-                        {/* Destination Input */}
-                        <div
-                            className={`absolute transition-all duration-300 ${driveOpen ? "pointer-events-auto translate-x-0 opacity-100" : "pointer-events-none invisible translate-x-4 opacity-0"}`}
-                        >
-                            <div className="flex items-center gap-4">
-                                <button
-                                    className="rounded-full border-2 border-slate-600 p-2 transition-colors hover:cursor-pointer hover:bg-slate-100"
-                                    onClick={handleCancelDriveClick}
-                                >
-                                    <X size={32} color="#2e2e2e" />
-                                </button>
-                                <div className="flex flex-col gap-1">
-                                    <h3 className="text-xl text-gray-800">
-                                        Set Destination:
-                                    </h3>
-                                    <div className="flex gap-2">
-                                        <input
-                                            type="text"
-                                            placeholder="Enter destination"
-                                            className="w-50 rounded-md border-2 border-slate-600 px-2 py-1"
-                                            value={destinationInput}
-                                            onChange={(e) =>
-                                                setDestinationInput(
-                                                    e.target.value,
-                                                )
-                                            }
-                                            onKeyDown={(e) => {
-                                                if (e.key === "Enter") {
-                                                    handleSearchButton();
-                                                }
-                                            }}
-                                        />
-                                        <button
-                                            className="rounded-md p-2 transition-colors hover:cursor-pointer hover:bg-slate-100"
-                                            onClick={handleSearchButton}
-                                        >
-                                            <Search color="#2e2e2e" />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+					{/* Drive Button */}
+					<div
+						className={`absolute transition-all duration-300 ${driveOpen ? "pointer-events-none -translate-x-4 opacity-0" : "pointer-events-auto translate-x-0 opacity-100"}`}
+					>
+						<button
+							className={`flex items-center gap-2 rounded-xl border-2 border-slate-600 p-4 transition-colors ${
+								parkIsLoading
+									? "cursor-not-allowed opacity-50"
+									: "hover:cursor-pointer hover:bg-sky-100"
+							}`}
+							onClick={handleDriveClick}
+							disabled={parkIsLoading}
+						>
+							<CarFront size={32} color="#2e2e2e" />
+							<h3 className="text-2xl font-medium text-gray-800">
+								Drive
+							</h3>
+						</button>
+					</div>
+					{/* Destination Input */}
+					<div
+						className={`absolute transition-all duration-300 ${driveOpen ? "pointer-events-auto translate-x-0 opacity-100" : "pointer-events-none invisible translate-x-4 opacity-0"}`}
+					>
+						<div className="flex items-center gap-4">
+							<button
+								className="rounded-full border-2 border-slate-600 p-2 transition-colors hover:cursor-pointer hover:bg-slate-100"
+								onClick={handleCancelDriveClick}
+							>
+								<X size={32} color="#2e2e2e" />
+							</button>
+							<div className="flex flex-col gap-1">
+								<h3 className="text-xl text-gray-800">
+									Set Destination:
+								</h3>
+								<div className="flex gap-2">
+									<input
+										type="text"
+										placeholder="Enter destination"
+										className="w-50 rounded-md border-2 border-slate-600 px-2 py-1"
+										value={destinationInput}
+										onChange={(e) =>
+											setDestinationInput(
+												e.target.value,
+											)
+										}
+										onKeyDown={(e) => {
+											if (e.key === "Enter") {
+												handleSearchButton();
+											}
+										}}
+									/>
+									<button
+										className="rounded-md p-2 transition-colors hover:cursor-pointer hover:bg-slate-100"
+										onClick={handleSearchButton}
+									>
+										<Search color="#2e2e2e" />
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
                     <div
                         className={`absolute left-1/2 -translate-x-1/2 transition-all duration-300 ${driveOpen ? "pointer-events-none opacity-0" : "pointer-events-auto opacity-100"}`}
                     >
