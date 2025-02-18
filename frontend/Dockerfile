@@ -20,5 +20,5 @@ RUN npm install -g serve
 ARG VITE_GOOGLE_MAPS_API_KEY
 ENV VITE_GOOGLE_MAPS_API_KEY=$VITE_GOOGLE_MAPS_API_KEY
 
-EXPOSE 80
-CMD ["serve", "-s", "dist", "-l", "80"]
+EXPOSE 5173
+CMD ["serve", "-s", "dist", "-l", "5173"]
