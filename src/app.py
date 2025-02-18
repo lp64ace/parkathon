@@ -19,6 +19,7 @@ def predict():
         if not lat or not lon or not timestamp or not weather:
             return jsonify({'error': 'Missing required parameters'}), 400
 
+        print(f"Request was sent with host url {request.host_url}")
         print(f"Making request to backend with lat: {lat}, lon: {lon}, radius: {radius}")
         response = requests.get('/api/park/find', params={
             'lat': lat,
