@@ -271,7 +271,7 @@ app.get("/transcript", async (req, res) => {
                 {
                     role: "system",
                     content:
-                        "You are a location extractor. Extract only the location name from the given text. Respond with just the location name, nothing else.",
+                        "You are a location extractor. Extract only the location name from the given text. Respond with just the location name, nothing else. If the user specifies the road or any other information that correlates with the location, add that as well. The final result should be a location on the map.",
                 },
                 {
                     role: "user",
@@ -279,7 +279,7 @@ app.get("/transcript", async (req, res) => {
                 },
             ],
             temperature: 0.2,
-            max_tokens: 50,
+            max_tokens: 70,
         });
 
         const location = completion.choices[0].message.content.trim();
