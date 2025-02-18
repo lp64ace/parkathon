@@ -1,14 +1,21 @@
 version: '3.8'
 
 services:
+    nginx:
+        build:
+            context: ./nginx
+        ports:
+            - "80:80"
+            - "443:443"
+        depends_on:
+            - frontend
+          
     frontend:
         build:
             context: ./frontend
             dockerfile: Dockerfile
             args:
                 - VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}
-        ports:
-            - "80:80"
         environment:
             - VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}
         depends_on:
