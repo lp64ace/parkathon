@@ -6,10 +6,8 @@ services:
             context: ./frontend
             dockerfile: Dockerfile
             args:
-                - VITE_HOST=${MY_HOST}
                 - VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}
         environment:
-            - VITE_HOST=${MY_HOST}
             - VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}
         depends_on:
             - backend
@@ -23,14 +21,12 @@ services:
             dockerfile: Dockerfile
             args:
                 - DB_HOST=parkathon-data
-                - MY_HOST=${MY_HOST}
                 - DB_USER=${DB_USER}
                 - DB_PASSWORD=${DB_PASSWORD}
                 - DB_NAME=${DB_NAME}
                 - OPENAI_API_KEY=${OPENAI_API_KEY}
         environment:
             - DB_HOST=parkathon-data
-            - MY_HOST=${MY_HOST}
             - DB_USER=${DB_USER}
             - DB_PASSWORD=${DB_PASSWORD}
             - DB_NAME=${DB_NAME}
@@ -39,6 +35,29 @@ services:
             - "9000:9000"
         depends_on:
             - parkathon-data
+        networks:
+            - app-network
+
+    python-service:
+        build:
+            context: ./src
+            dockerfile: Dockerfile
+            args:
+                - DB_HOST=parkathon-data
+                - DB_USER=${DB_USER}
+                - DB_PASSWORD=${DB_PASSWORD}
+                - DB_NAME=${DB_NAME}
+                - OPENAI_API_KEY=${OPENAI_API_KEY}
+        environment:
+            - DB_HOST=parkathon-data
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
+            - DB_NAME=${DB_NAME}
+        ports:
+            - "9001:9001"
+        depends_on:
+            - parkathon-data
+            - backend
         networks:
             - app-network
 
@@ -51,31 +70,7 @@ services:
         depends_on:
             - backend
             - frontend
-        networks:
-            - app-network
-
-    python-service:
-        build:
-            context: ./src
-            dockerfile: Dockerfile
-            args:
-                - DB_HOST=parkathon-data
-                - MY_HOST=${MY_HOST}
-                - DB_USER=${DB_USER}
-                - DB_PASSWORD=${DB_PASSWORD}
-                - DB_NAME=${DB_NAME}
-                - OPENAI_API_KEY=${OPENAI_API_KEY}
-        environment:
-            - DB_HOST=parkathon-data
-            - MY_HOST=${MY_HOST}
-            - DB_USER=${DB_USER}
-            - DB_PASSWORD=${DB_PASSWORD}
-            - DB_NAME=${DB_NAME}
-        ports:
-            - "9001:9001"
-        depends_on:
-            - parkathon-data
-            - backend
+            - python-service
         networks:
             - app-network
 
