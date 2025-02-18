@@ -2,7 +2,7 @@ import mysql.connector
 import pandas as pd
 import os
 
-def connect_to_db():
+def DB_connect():
     return mysql.connector.connect(
         host=os.getenv('DB_HOST'),
         user=os.getenv('DB_USER'),
@@ -11,20 +11,20 @@ def connect_to_db():
     )
 
 # fetches all parking instances at a given spot
-def fetch(lon, lat):
-    conn = connect_to_db()
+def fetch(lat, lon):
+    conn = DB_connect()
     query = """
     SELECT parking_id, lat, lon, start_time, end_time, start_weather, end_weather
     FROM parking
-    WHERE lon = %s AND lat = %s
+    WHERE lat = %s AND lon = %s
     """
-    df = pd.read_sql_query(query, conn, params=(lon,lat,))
+    df = pd.read_sql_query(query, conn, params=(lat,lon,))
     conn.close()
     return df
 
-# fetches all DISTINCT parking spots ([lat, long] pairs are unique for each spot} 
+# fetches all DISTINCT parking spots ([lat, long] pairs are unique for each spot} (OBSOLETE) 
 def fetch_all():
-    conn = connect_to_db()
+    conn = DB_connect()
     query = """
     SELECT DISTINCT lat, lon
     FROM parking

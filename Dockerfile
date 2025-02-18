@@ -9,29 +9,40 @@ ARG VITE_GOOGLE_MAPS_API_KEY
 ENV VITE_GOOGLE_MAPS_API_KEY=$VITE_GOOGLE_MAPS_API_KEY
 RUN npm run build
 
+# Build backend
+FROM node:18-alpine as backend-build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+
+# Build Python service
+FROM python:3.9-slim as python-build
+WORKDIR /app/python
+COPY lib/prediction/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY lib/prediction/ .
+
+# Final stage
 FROM node:18-alpine
 WORKDIR /app
 
-# Copy the package.json and package-lock.json (or yarn.lock) into the container
-COPY package*.json ./
-# Install dependencies
-RUN npm install
-RUN npm install express mysql2 bcrypt jsonwebtoken cookie-parser dotenv cors
-
-COPY .env .env
-
-# Copy the rest of the application files into the container
-COPY . .
+# Copy backend files
+COPY --from=backend-build /app /app
 
 # Copy built frontend files
 COPY --from=frontend-build /app/frontend/dist /app/frontend/dist
 
+# Copy Python service files
+COPY --from=python-build /app/python /app/python
+
 # Install serve to host the frontend
 RUN npm install -g serve
 
-# Expose the ports for frontend and backend
+# Expose the ports for frontend, backend, and Python service
 EXPOSE 80
 EXPOSE 9000
+EXPOSE 9001
 
-# Command to run the app (backend and frontend)
-CMD ["sh", "-c", "node index.js & serve -s frontend/dist -l 80"]
+# Command to run the app (backend, frontend, and Python service)
+CMD ["sh", "-c", "node index.js & serve -s frontend/dist -l 80 & python /app/python/app.py"]
