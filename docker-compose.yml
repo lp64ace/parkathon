@@ -5,7 +5,7 @@ services:
         build:
             context: ./frontend
             dockerfile: Dockerfile
-            arg:
+            args:
                 - VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}
         ports:
             - "80:80"
@@ -19,6 +19,12 @@ services:
         build:
             context: ./lib
             dockerfile: Dockerfile
+            args:
+                - DB_HOST=parkathon-data
+                - DB_USER=${DB_USER}
+                - DB_PASSWORD=${DB_PASSWORD}
+                - DB_NAME=${DB_NAME}
+                - OPENAI_API_KEY=${OPENAI_API_KEY}
         environment:
             - DB_HOST=parkathon-data
             - DB_USER=${DB_USER}
@@ -36,6 +42,12 @@ services:
         build:
             context: ./src
             dockerfile: Dockerfile
+            args:
+                - DB_HOST=parkathon-data
+                - DB_USER=${DB_USER}
+                - DB_PASSWORD=${DB_PASSWORD}
+                - DB_NAME=${DB_NAME}
+                - OPENAI_API_KEY=${OPENAI_API_KEY}
         environment:
             - DB_HOST=parkathon-data
             - DB_USER=${DB_USER}
