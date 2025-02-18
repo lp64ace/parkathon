@@ -142,7 +142,6 @@ function Footer({
                     <div
                         className={`absolute transition-all duration-300 ${driveOpen ? "pointer-events-none -translate-x-4 opacity-0" : "pointer-events-auto translate-x-0 opacity-100"}`}
                     >
-                        >
                             <button
                                 className={`flex items-center gap-2 rounded-xl border-2 border-slate-600 p-4 transition-colors ${
                                     parkIsLoading
