@@ -9,17 +9,18 @@ import { useCallback, useState, useEffect } from "react";
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const INITIAL_CAMERA = {
     center: { lat: 40.6401, lng: 22.9444 },
-    zoom: 12,
+    zoom: 13,
 };
 
-function GMap({ currentLocation, cameraLocation, marker }) {
+function GMap({ currentLocation, cameraLocation, marker, parkingLocations }) {
     const [cameraProps, setCameraProps] = useState(INITIAL_CAMERA);
     const handleCameraChange = useCallback((ev) => {
         // console.log(ev);
         setCameraProps(ev.detail);
     }, []);
 
-    const markerLocation = (marker == 'parking') ? currentLocation : cameraLocation;
+    const markerLocation =
+        marker == "parking" ? currentLocation : cameraLocation;
 
     useEffect(() => {
         if (!markerLocation) {
@@ -27,6 +28,7 @@ function GMap({ currentLocation, cameraLocation, marker }) {
         } else {
             setCameraProps((prev) => ({
                 ...prev,
+                zoom: 17,
                 center: markerLocation,
             }));
         }
@@ -45,12 +47,26 @@ function GMap({ currentLocation, cameraLocation, marker }) {
                 {markerLocation && (
                     <AdvancedMarker position={markerLocation}>
                         <Pin
-                            background={"#0f9d58"}
-                            borderColor={"#006425"}
-                            glyphColor={"#60d98f"}
+                        // background={"#0f9d58"}
+                        // borderColor={"#006425"}
+                        // glyphColor={"#60d98f"}
                         />
                     </AdvancedMarker>
                 )}
+
+                {marker === "destination" &&
+                    parkingLocations.map((location, index) => {
+                        return (
+                            <AdvancedMarker key={index} position={location}>
+                                <Pin
+                                    background={"#0f9d58"}
+                                    borderColor={"#006425"}
+                                    glyphColor={"#60d98f"}
+                                    scale={1.2}
+                                />
+                            </AdvancedMarker>
+                        );
+                    })}
             </Map>
         </APIProvider>
     );
