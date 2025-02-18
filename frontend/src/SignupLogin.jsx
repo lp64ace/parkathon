@@ -17,7 +17,8 @@ function SignupLogin({ setShowSignupLogin, setUserId }) {
                 const data = await login(form.email, form.password);
                 setUserId(data.userId);
             } else if (action === "Sign Up") {
-                await signup(form.name, form.email, form.password);
+                const data = await signup(form.name, form.email, form.password);
+                setUserId(data.userId);
             }
             setShowSignupLogin(false);
         } catch (error) {
