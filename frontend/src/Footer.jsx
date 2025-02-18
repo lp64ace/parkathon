@@ -137,7 +137,7 @@ function Footer({
 
     return (
         <div className="flex w-screen justify-center">
-            <div className="fixed bottom-0 z-10 flex w-screen max-w-192 flex-col items-center">
+            <div className="fixed bottom-0 z-999 flex w-screen max-w-192 flex-col items-center">
                 {showSignupLogin && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center">
                         <SignupLogin
