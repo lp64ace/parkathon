@@ -19,12 +19,6 @@ services:
         build:
             context: ./lib
             dockerfile: Dockerfile
-            arg:
-                - DB_HOST=parkathon-data
-                - DB_USER=${DB_USER}
-                - DB_PASSWORD=${DB_PASSWORD}
-                - DB_NAME=${DB_NAME}
-                - OPENAI_API_KEY=${OPENAI_API_KEY}
         environment:
             - DB_HOST=parkathon-data
             - DB_USER=${DB_USER}
