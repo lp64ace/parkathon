@@ -18,7 +18,7 @@ function ParkingSpots({ userId }) {
             spots = formatCoordinates(spots);
             setActiveParkingSpots(spots);
 
-            //Mock data
+            // Mock data
             // const spots = [
             //     { lat: 37.9838, lng: 23.7275, parking_id: "p1" },
             //     { lat: 37.9848, lng: 23.7285, parking_id: "p2" },
@@ -94,7 +94,7 @@ function ParkingSpots({ userId }) {
                         <>
                             <div className="flex items-center justify-between gap-6">
                                 <h2 className="text-lg font-bold">
-                                    Active Parking Spots
+                                    {activeParkingSpots.length === 0 ? "No active parking spots": "Active Parking Spots"}
                                 </h2>
                                 <button
                                     className="self-end rounded-full border-2 border-slate-600 p-1 transition-colors hover:cursor-pointer hover:bg-slate-100"
@@ -103,7 +103,7 @@ function ParkingSpots({ userId }) {
                                     <ChevronUp size={24} color="#2e2e2e" />
                                 </button>
                             </div>
-                            <hr className="h-px w-full bg-slate-300" />
+                            {activeParkingSpots.length !== 0 && <hr className="h-px w-full bg-slate-300" />}
                             <div className="flex flex-col gap-2">
                                 {activeParkingSpots.map((spot, index) => (
                                     <div
