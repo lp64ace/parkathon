@@ -29,18 +29,18 @@ function Footer({
                         };
                         setCurrentLocation(location);
                         setMarker("parking");
-                        occupyPark(userId, location.lat, location.lng); // Send location to backend
+                        occupyPark(userId, location.lat, location.lng);
                         setParkIsLoading(false);
                         console.log(location);
                     },
                     (error) => {
+                        // For some reason Chrome instantly throws an error when it asks for gps permission
+                        // setParkIsLoading(false);
                         console.error("Error getting location:", error);
-                        alert(
-                            "Unable to get your location. Please enable location services.",
-                        );
                     },
                 );
             } else {
+                setParkIsLoading(false);
                 alert("Geolocation is not supported by your browser");
             }
         } catch {
@@ -112,6 +112,7 @@ function Footer({
 
             setMarker("destination");
         } catch (error) {
+            setMarker("destination");
             console.error("Error getting parking locations:", error);
         }
     };

@@ -61,7 +61,7 @@ function Dictaphone({ getLocationFromDestination, setCameraLocation, setParkingL
             onClick={handleMicButton}
         >
             {listening ? (
-                <Mic size={32} color="#2e2e2e" />
+                <Mic size={32} color="#427ab3" />
             ) : (
                 <MicOff size={32} color="#2e2e2e" />
             )}
