@@ -26,6 +26,26 @@ app.get('/user/signup', async (req, res) => {
 	
 });
 
+app.get('/map/name/at', async (req, res) => {
+	let {
+		lat,
+		lon,
+	} = req.query;
+	
+	if (!lat || !lon) {
+		return res.status(400).json({ error: "Latitude and longitude are required" });
+	}
+	
+	try {
+		const data = await parking.OpenStreetLocationInfoAt(lat, lon);
+		
+		return res.json(data);
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ error: "Failed to fetch map information" });
+	}
+});
+
 app.get('/park/list/active', async (req, res) => {
 	let {
 		user,
