@@ -1,74 +1,70 @@
-import {
-    APIProvider,
-    Map,
-    AdvancedMarker,
-    Pin,
-} from "@vis.gl/react-google-maps";
+import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 import { useCallback, useState, useEffect } from "react";
+import L from "leaflet";
 
-const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-const INITIAL_CAMERA = {
-    center: { lat: 40.6401, lng: 22.9444 },
-    zoom: 13,
-};
+// Fix for default marker icons in Leaflet
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+    iconUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+    shadowUrl:
+        "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+});
+
+// Custom component to handle map center updates
+function MapUpdater({ center }) {
+    const map = useMap();
+    useEffect(() => {
+        if (center) {
+            map.setView(center, 17);
+        }
+    }, [center, map]);
+    return null;
+}
 
 function GMap({ currentLocation, cameraLocation, marker, parkingLocations }) {
-    const [cameraProps, setCameraProps] = useState(INITIAL_CAMERA);
-    const handleCameraChange = useCallback((ev) => {
-        // console.log(ev);
-        setCameraProps(ev.detail);
-    }, []);
-
+    const initialCenter = { lat: 40.6401, lng: 22.9444 };
     const markerLocation =
-        marker == "parking" ? currentLocation : cameraLocation;
+        marker === "parking" ? currentLocation : cameraLocation;
 
-    useEffect(() => {
-        if (!markerLocation) {
-            return;
-        } else {
-            setCameraProps((prev) => ({
-                ...prev,
-                zoom: 17,
-                center: markerLocation,
-            }));
-        }
-    }, [markerLocation]);
+    const parkingIcon = new L.Icon({
+        iconUrl:
+            "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowUrl:
+            "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+        shadowSize: [41, 41],
+    });
 
     return (
-        <APIProvider apiKey={API_KEY}>
-            <Map
-                {...cameraProps}
-                style={{ width: "100vw", height: "100vh" }}
-                onCameraChanged={handleCameraChange}
-                gestureHandling={"greedy"}
-                disableDefaultUI={true}
-                mapId="MAP1"
-            >
-                {markerLocation && (
-                    <AdvancedMarker position={markerLocation}>
-                        <Pin
-                        // background={"#0f9d58"}
-                        // borderColor={"#006425"}
-                        // glyphColor={"#60d98f"}
-                        />
-                    </AdvancedMarker>
-                )}
+        <MapContainer
+            center={initialCenter}
+            zoom={13}
+            style={{ width: "100vw", height: "100vh" }}
+        >
+            <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
 
-                {marker === "destination" &&
-                    parkingLocations.map((location, index) => {
-                        return (
-                            <AdvancedMarker key={index} position={location}>
-                                <Pin
-                                    background={"#0f9d58"}
-                                    borderColor={"#006425"}
-                                    glyphColor={"#60d98f"}
-                                    scale={1.2}
-                                />
-                            </AdvancedMarker>
-                        );
-                    })}
-            </Map>
-        </APIProvider>
+            <MapUpdater center={markerLocation} />
+
+            {markerLocation && <Marker position={markerLocation} />}
+
+            {marker === "destination" &&
+                parkingLocations.map((location, index) => (
+                    <Marker
+                        key={index}
+                        position={location}
+                        icon={parkingIcon}
+                    />
+                ))}
+        </MapContainer>
     );
 }
 
