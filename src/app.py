@@ -19,6 +19,7 @@ def predict():
         if not lat or not lon or not timestamp or not weather:
             return jsonify({'error': 'Missing required parameters'}), 400
 
+        print(request)
         print(f"Request was sent with host url {request.host_url}")
         print(f"Making request to backend with lat: {lat}, lon: {lon}, radius: {radius}")
         response = requests.get('/api/park/find', params={
@@ -45,7 +46,7 @@ def predict():
         return jsonify(results)
     except requests.exceptions.RequestException as e:
         print(f"RequestException: {e}")
-        return jsonify({'error': 'Failed to connect to backend service', 'details': str(e) , 'request-host': request.host_url}), 500
+        return jsonify({'error': 'Failed to connect to backend service', 'details': str(e)}), 500
     except Exception as e:
         print(f"Exception: {e}")
         return jsonify({'error': str(e)}), 500
