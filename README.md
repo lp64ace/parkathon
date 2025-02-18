@@ -27,6 +27,15 @@ docker-compose up
 
 As far as the backend is concerned the following queries are available on port 9000.
 
+### POST /map/name/at
+
+**Purpose**: This endpoint is used to return information about the name of a location.
+
+**Query Parameters**:
+
+- `lat`: (number) The latiture of the location.
+- `lon`: (number) The longtitute of the location.
+
 ### POST /park/list/active
 
 **Purpose**: This endpoint is used to return a list of all the current parking spots occupied by the specified user.
@@ -82,6 +91,6 @@ As far as the backend is concerned the following queries are available on port 9
 
 **Query Parameters**:
 
-- `lat`: (number) The latiture of the location.
-- `lon`: (number) The longtitute of the location.
+- `q_lat`: (number) The latiture of the location.
+- `q_lon`: (number) The longtitute of the location.
 - `rad`: (number) The radius in meters we want to occupy.
