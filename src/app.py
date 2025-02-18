@@ -45,7 +45,7 @@ def predict():
         return jsonify(results)
     except requests.exceptions.RequestException as e:
         print(f"RequestException: {e}")
-        return jsonify({'error': 'Failed to connect to backend service', 'details': str(e)}), 500
+        return jsonify({'error': 'Failed to connect to backend service', 'details': str(e) , 'request-host': request.host_url}), 500
     except Exception as e:
         print(f"Exception: {e}")
         return jsonify({'error': str(e)}), 500
