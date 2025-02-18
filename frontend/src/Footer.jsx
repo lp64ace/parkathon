@@ -78,7 +78,7 @@ function Footer({ setCurrentLocation, userId, setCameraLocation, setMarker }) {
     return (
         <div className="fixed bottom-0 z-10 flex w-screen flex-col items-center">
             {showSignupLogin && <div className="fixed inset-0 z-50 flex items-center justify-center">
-                {SignupLogin ? <SignupLogin /> : null}
+                <SignupLogin setShowSignupLogin={setShowSignupLogin}/>
             </div>}
             <div className="flex h-6 w-24 translate-y-[2px] items-center justify-center rounded-t-2xl border-2 border-b-0 border-slate-700 bg-white">
                 <ArrowDown size={20} color="#2e2e2e" />

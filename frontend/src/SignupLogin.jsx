@@ -7,10 +7,9 @@ import email_icon from './assets/email.png';
 
 import { login, signup } from './api/user';
 
-function SignupLogin() {
+function SignupLogin({ setShowSignupLogin }) {
     const [action, setAction] = useState("Login");
     const [form, setForm] = useState({ name: "", email: "", password: "" });
-    const [isSubmitted, setIsSubmitted] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -21,15 +20,11 @@ function SignupLogin() {
             } else if (action === "Sign Up") {
                 await signup({ name: form.name, email: form.email, password: form.password });
             }
-            setIsSubmitted(true);
+            setShowSignupLogin(false);
         } catch (error) {
             alert(`${action} failed!`);
         }
     };
-
-    if (isSubmitted) {
-        return null;
-    }
 
     return (
         <div className='container'>
