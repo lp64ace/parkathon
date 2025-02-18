@@ -1,7 +1,6 @@
-import numpy as np
 import pandas as pd
 import holidays
-from datetime import datetime, timedelta
+from datetime import datetime
 
 # splits df into two dataframes, one for the start (label 0) and one for the end of the trips (label 1)
 def preprocess(df):

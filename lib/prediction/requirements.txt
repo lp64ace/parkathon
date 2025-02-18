@@ -1,7 +1,6 @@
-Flask
+flask
 requests
 mysql-connector-python
 pandas
-numpy
 holidays
 scikit-learn
