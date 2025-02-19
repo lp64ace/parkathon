@@ -29,8 +29,9 @@ docker-compose build
 docker-compose up
 ```
 
+## Documentation
+
+For more information about the application you can view the `docs/` directory.
+
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Apendix
-For more details please refer to `docs/`. For technical details look up `workflow.md` and `lib.md`, for the presentation `presentation.pdf`.
