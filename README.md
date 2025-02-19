@@ -4,9 +4,17 @@ Parkathon is a web application designed to help users find parking spots efficie
 
 ## Features
 
-- **Real-time Availability**: Determines parking availability based on nearby users' parking or unparking activities.
-- **Historical Data Analysis**: Fetches historical parking data from a database and uses a machine learning model to predict future parking availability.
-- **User-friendly Interface**: An intuitive frontend to display parking predictions to users through a map.
+- **Real-time Availability**
+
+Determines parking availability based on nearby users' parking or unparking activities.
+
+- **Historical Data Analysis**
+
+Fetches historical parking data from a database and uses a machine learning model to predict future parking availability.
+
+- **User-friendly Interface**
+
+An intuitive frontend to display parking predictions to users through a map.
 
 - **Parking Status**
 
