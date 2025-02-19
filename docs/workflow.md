@@ -21,7 +21,9 @@ To use the app, the user is prompted to log in. Their credentials are handled se
 After logging in, the user sets their destination, triggering a call to the backend. The backend receives the user's position (latitude and longitude), timestamp, and weather information as input.
 
 ### Locating Nearby Spots
-The app fetches information from the database and uses a **kd-tree** to locate available parking spots within a specified radius from the destination. Since it is unrealistic to assume the database always has up-to-date information about parking spot availability (as not all users use the app), the app makes additional calls to the database for each identified "available" spot. These calls gather any entries related to that specific spot.
+The app fetches information from the database and uses a **kd-tree** to locate available parking spots within a specified radius from the destination. 
+![KDTree](../assets/kdtree.png)
+Since it is unrealistic to assume the database always has up-to-date information about parking spot availability (as not all users use the app), the app makes additional calls to the database for each identified "available" spot. These calls gather any entries related to that specific spot.
 
 ### Prediction
 The gathered data is then preprocessed, and new meaningful features are added. A Random Forest classifier with regression is trained on this data to predict the probability that a given parking spot is free, based on the time, weather, and other factors. The results are displayed to the user as color-coded pins on a map, with green indicating higher probabilities and red indicating lower probabilities.
