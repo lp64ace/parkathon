@@ -6,10 +6,10 @@ export const occupyPark = async (userId, lat, lon) => {
         const response = await axios.post(
             `/api/park/occupy?user=${userId}&lat=${lat}&lon=${lon}`,
         );
-        console.log("Response:", response.data);
         return response.data;
     } catch (error) {
-        alert(error);
+        console.log(error);
+		alert(error);
         throw error;
     }
 };
