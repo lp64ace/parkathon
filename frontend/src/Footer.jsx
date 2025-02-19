@@ -45,11 +45,11 @@ function Footer({
 		});
 	};
 	
-	const handleLocateButton = () => {
+	const handleLocateButton = async () => {
 		updateUserLocation();
 	};
 
-    const handleParkButton = () => {
+    const handleParkButton = async () => {
         if (!userId) {
             setShowSignupLogin(true);
             return;
