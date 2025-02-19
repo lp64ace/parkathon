@@ -1,4 +1,4 @@
-import { CarFront, CircleParking, ArrowDown, X, Search, Locate } from "lucide-react";
+import { CarFront, CircleParking, ArrowDown, X, Search } from "lucide-react";
 import { occupyPark } from "./api/occupyPark";
 import { getParkingLocations } from "./api/getParkingLocations";
 import { useState, useEffect } from "react";
@@ -24,49 +24,50 @@ function Footer({
     const [loadingParkingLocations, setLoadingParkingLocations] =
         useState(false);
 
-	const updateUserLocation = () => {
-		return new Promise((resolve, reject) => {
-			if ("geolocation" in navigator) {
-				navigator.geolocation.getCurrentPosition(
-					(position) => {
-						const location = {
-							lat: position.coords.latitude,
-							lng: position.coords.longitude,
-						};
-						setCurrentLocation(location);
-						setMarker("parking");
-						resolve(position.coords);
-					},
-					(error) => {
-						// For some reason Chrome instantly throws an error when it asks for gps permission
-						reject(`Geolocation failed with error ${error}`);
-					},
-				);
-			} else {
-				reject('Geolocation is not supported by your browser');
-			}
-		});
-	};
-	
-	const handleLocateButton = async () => {
-		updateUserLocation();
-	};
+    const handleParkButton = () => {
+        // const userToken = Cookies.get("user_token");
+        // console.log("token: ", userToken);
 
-    const handleParkButton = async () => {
+        // if (!userToken) {
+        //     setShowSignupLogin(true);
+        //     return;
+        // }
+
+        console.log(userId);
         if (!userId) {
             setShowSignupLogin(true);
             return;
         }
 
-		setParkIsLoading(true);
-		updateUserLocation().then((coords) => {
-			occupyPark(userId, coords.latitude, coords.longitude);
-			setParkIsLoading(false);
-			console.log(coords);
-		}).catch((error) => {
-			setParkIsLoading(false);
-			console.error(error);
-		});
+        try {
+            setParkIsLoading(true);
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const location = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+                        setCurrentLocation(location);
+                        setMarker("parking");
+                        occupyPark(userId, location.lat, location.lng);
+                        setParkIsLoading(false);
+                        console.log(location);
+                    },
+                    (error) => {
+                        // For some reason Chrome instantly throws an error when it asks for gps permission
+                        // setParkIsLoading(false);
+                        console.error("Error getting location:", error);
+                    },
+                );
+            } else {
+                setParkIsLoading(false);
+                alert("Geolocation is not supported by your browser");
+            }
+        } catch {
+            setParkIsLoading(false);
+            console.error("Error getting location");
+        }
     };
 
     const handleDriveClick = () => {
@@ -238,20 +239,6 @@ function Footer({
                             setParkingLocations={setParkingLocations}
                             setMarker={setMarker}
                         />
-                    </div>
-					{/* Locate Button */}
-                    <div
-                        className={`transition-all duration-300 ${driveOpen ? "pointer-events-none invisible translate-x-4 opacity-0" : "translate-x-0 opacity-100"}`}
-                    >
-                        <button
-							className="flex items-center gap-2 rounded-xl border-2 border-slate-600 p-4 transition-colors hover:cursor-pointer hover:bg-red-100"
-							onClick={handleLocateButton}
-						>
-							<Locate size={32} color="#2e2e2e" />
-							<h3 className="text-2xl font-medium text-gray-800">
-								Locate
-							</h3>
-						</button>
                     </div>
                     {/* Park Button */}
                     <div

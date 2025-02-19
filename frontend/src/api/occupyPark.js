@@ -6,10 +6,13 @@ export const occupyPark = async (userId, lat, lon) => {
         const response = await axios.post(
             `/api/park/occupy?user=${userId}&lat=${lat}&lon=${lon}`,
         );
+        console.log("Response:", response.data);
         return response.data;
     } catch (error) {
-        console.log(error);
-		alert(error.response.data.error || 'Communication with server failed');
+        console.error(
+            "Error sending parking location:",
+            error.response.data.error,
+        );
         throw error;
     }
 };
