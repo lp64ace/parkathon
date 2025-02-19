@@ -9,7 +9,7 @@ export const occupyPark = async (userId, lat, lon) => {
         return response.data;
     } catch (error) {
         console.log(error);
-		alert(error.response.data || 'Communication with server failed');
+		alert(error.response.data.error || 'Communication with server failed');
         throw error;
     }
 };
