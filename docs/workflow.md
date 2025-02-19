@@ -77,4 +77,3 @@ The design focuses on providing a seamless and efficient experience, allowing us
 - **Docker**: Containerization tool for deploying the application.
 - **MySQL**: Database management system for storing parking data.
 - **npm**: Node.js package manager for managing dependencies.
-- **serve**: Static file serving and single-page application support.
