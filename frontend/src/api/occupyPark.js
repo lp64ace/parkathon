@@ -9,10 +9,7 @@ export const occupyPark = async (userId, lat, lon) => {
         console.log("Response:", response.data);
         return response.data;
     } catch (error) {
-        console.error(
-            "Error sending parking location:",
-            error.response.data.error,
-        );
+        alert(error);
         throw error;
     }
 };
