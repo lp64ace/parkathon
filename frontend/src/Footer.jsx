@@ -55,17 +55,15 @@ function Footer({
             return;
         }
 
-        try {
-            setParkIsLoading(true);
-			const coords = await updateUserLocation();
+		setParkIsLoading(true);
+		updateUserLocation().then((coords) => {
 			occupyPark(userId, position.coords.latitude, position.coords.longitude);
 			setParkIsLoading(false);
-			
 			console.log(coords);
-        } catch {
-            setParkIsLoading(false);
-            console.error("Error getting location");
-        }
+		}).catch((error) => {
+			setParkIsLoading(false);
+			console.error(error);
+		});
     };
 
     const handleDriveClick = () => {
