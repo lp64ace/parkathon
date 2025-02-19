@@ -57,7 +57,7 @@ function Footer({
 
 		setParkIsLoading(true);
 		updateUserLocation().then((coords) => {
-			occupyPark(userId, position.coords.latitude, position.coords.longitude);
+			occupyPark(userId, coords.latitude, coords.longitude);
 			setParkIsLoading(false);
 			console.log(coords);
 		}).catch((error) => {
